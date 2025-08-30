@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RecommendationComponent } from '../recommendation/recommendation.component';
 
 @Component({
   selector: 'msc-home',
-  template: `<h1>Home</h1>`,
+  template: `<msc-recommendation></msc-recommendation>`,
+  imports: [RecommendationComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {}
