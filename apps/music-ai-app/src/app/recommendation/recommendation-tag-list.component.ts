@@ -3,7 +3,7 @@ import { ButtonModule } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 
 @Component({
-  selector: 'msc-recommendation-tag',
+  selector: 'msc-recommendation-tag-list',
   template: `<div class="flex flex-wrap flex-gap-2 justify-center items-center">
     @for(tag of tags; track tag.id) {
     <p-tag class="m-2" [value]="tag.name" [severity]="tag.color" />
@@ -25,7 +25,7 @@ import { Tag } from 'primeng/tag';
   imports: [Tag, ButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecommendationTagComponent {
+export class RecommendationTagListComponent {
   public readonly types = ['secondary', 'success', 'info', 'warn', 'danger'];
 
   public readonly tags = [
