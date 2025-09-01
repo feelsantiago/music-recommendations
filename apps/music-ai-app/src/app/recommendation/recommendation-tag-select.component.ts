@@ -15,6 +15,7 @@ interface TagItem {
     <p-divider align="left">
       <h1>{{ title() }}</h1>
     </p-divider>
+    <ng-content></ng-content>
     @for(tag of tags(); track tag.id) {
     <msc-recommendation-tag
       [disabled]="tag.disabled"

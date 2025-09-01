@@ -5,7 +5,10 @@ import {
   model,
 } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 import { RecommendationTagSelectComponent } from './recommendation-tag-select.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'msc-recommendation-drawer',
@@ -17,16 +20,46 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
       <msc-recommendation-tag-select title="Mood" [tags]="moods" />
       <div class="m-10"></div>
 
-      <msc-recommendation-tag-select title="Custom" [tags]="custom" />
+      <msc-recommendation-tag-select title="Custom" [tags]="custom">
+        <div class="m-2 mb-4 flex items-center gap-2">
+          <input
+            class="flex-2"
+            pSize="small"
+            type="text"
+            pInputText
+            [(ngModel)]="value"
+          />
+          <p-button
+            icon="pi pi-arrow-right"
+            size="small"
+            severity="contrast"
+            aria-label="Save"
+          />
+        </div>
+      </msc-recommendation-tag-select>
       <div class="m-10"></div>
+
+      <p-button
+        [fluid]="true"
+        label="Save"
+        severity="contrast"
+        (onClick)="open.set(false)"
+      />
     </p-drawer>
   `,
-  imports: [DrawerModule, RecommendationTagSelectComponent],
+  imports: [
+    FormsModule,
+    InputTextModule,
+    DrawerModule,
+    ButtonModule,
+    RecommendationTagSelectComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationDrawerComponnet {
   public open = model(false);
   public title = input('');
+  public value = '';
 
   public genres = [
     {
