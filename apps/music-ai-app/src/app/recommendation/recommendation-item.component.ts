@@ -5,8 +5,8 @@ import { Skeleton } from 'primeng/skeleton';
   selector: 'msc-recommendation-item',
   template: `<div class="h-90 flex flex-col justify-end items-center">
     <p-skeleton height="250px" width="70%"></p-skeleton>
-    <p class="p-2 pt-4">Album Title</p>
-    <P>Artist</P>
+    <p-skeleton class="mt-4" width="10rem"></p-skeleton>
+    <p-skeleton class="m-2" width="5rem"></p-skeleton>
   </div>`,
   imports: [Skeleton],
   changeDetection: ChangeDetectionStrategy.OnPush,
