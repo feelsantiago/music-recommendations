@@ -15,6 +15,13 @@ import { RecommendationTagComponent } from './recommendation-tag.component';
       (pressed)="add.emit()"
     />
   </div>`,
+  styles: [
+    `
+      :host ::ng-deep .p-tag-icon {
+        padding-left: 2px !important;
+      }
+    `,
+  ],
   imports: [RecommendationTagComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
