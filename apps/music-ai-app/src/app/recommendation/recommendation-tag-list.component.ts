@@ -16,7 +16,11 @@ type MaxTagList = number;
   selector: 'msc-recommendation-tag-list',
   template: `<div class="flex flex-wrap flex-gap-2 justify-center items-center">
     @for (tag of slice(); track tag.id) {
-      <msc-recommendation-tag [value]="tag.name" [severity]="tag.color" />
+      <msc-recommendation-tag
+        [value]="tag.name"
+        [severity]="tag.color"
+        (pressed)="onPressed(tag)"
+      />
     }
 
     @if (tags().length > max) {
@@ -51,5 +55,13 @@ export class RecommendationTagListComponent {
   constructor(private readonly _tags: Tags) {
     this.tags = toSignal(this._tags.selected$, { initialValue: [] });
     this.slice = computed(() => this.tags().slice(0, this.max));
+  }
+
+  public onPressed(tag: ColorizedTag): void {
+    console.log(tag);
+    const selected = this.tags().filter(
+      (selectedTag) => selectedTag.name !== tag.name,
+    );
+    this._tags.select(selected);
   }
 }
