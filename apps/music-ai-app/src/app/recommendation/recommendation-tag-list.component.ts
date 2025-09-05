@@ -1,6 +1,11 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
-import { Observable } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  output,
+  Signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Tags } from '../domain/tags/tags.service';
 import { ColorizedTag } from '../domain/tags/tags.types';
 import { RecommendationTagComponent } from './recommendation-tag.component';
@@ -10,13 +15,11 @@ type MaxTagList = number;
 @Component({
   selector: 'msc-recommendation-tag-list',
   template: `<div class="flex flex-wrap flex-gap-2 justify-center items-center">
-    @let tags = (tags$ | async) ?? [];
-
-    @for (tag of tags; track tag.id) {
+    @for (tag of slice(); track tag.id) {
       <msc-recommendation-tag [value]="tag.name" [severity]="tag.color" />
     }
 
-    @if (tags.length > max) {
+    @if (tags().length > max) {
       <msc-recommendation-tag value="..." [severity]="'danger'" />
     }
 
@@ -24,6 +27,7 @@ type MaxTagList = number;
       type="button"
       icon="pi pi-plus"
       [severity]="'contrast'"
+      [selectable]="false"
       (pressed)="add.emit()"
     />
   </div>`,
@@ -34,16 +38,18 @@ type MaxTagList = number;
       }
     `,
   ],
-  imports: [RecommendationTagComponent, AsyncPipe],
+  imports: [RecommendationTagComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationTagListComponent {
-  public readonly max: MaxTagList = 8;
-  public tags$: Observable<ColorizedTag[]>;
+  public readonly max: MaxTagList = 6;
+  public readonly tags: Signal<ColorizedTag[]>;
+  public readonly slice: Signal<ColorizedTag[]>;
 
   public add = output();
 
   constructor(private readonly _tags: Tags) {
-    this.tags$ = this._tags.selected$;
+    this.tags = toSignal(this._tags.selected$, { initialValue: [] });
+    this.slice = computed(() => this.tags().slice(0, this.max));
   }
 }
