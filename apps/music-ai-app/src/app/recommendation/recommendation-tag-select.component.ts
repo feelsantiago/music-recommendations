@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DividerModule } from 'primeng/divider';
+import { ColorizedTag } from '../domain/tags/tags.types';
 import { RecommendationTagComponent } from './recommendation-tag.component';
-
-interface TagItem {
-  id: number;
-  name: string;
-  disabled: boolean;
-  color: 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'contrast';
-}
 
 @Component({
   selector: 'msc-recommendation-tag-select',
@@ -16,18 +10,20 @@ interface TagItem {
       <h1>{{ title() }}</h1>
     </p-divider>
     <ng-content></ng-content>
-    @for(tag of tags(); track tag.id) {
-    <msc-recommendation-tag
-      [disabled]="tag.disabled"
-      [value]="tag.name"
-      [severity]="tag.color"
-    />
-    }
+    <div class="overflow-y-auto max-h-100">
+      @for (tag of tags(); track tag.id) {
+        <msc-recommendation-tag
+          [disabled]="false"
+          [value]="tag.name"
+          [severity]="tag.color"
+        />
+      }
+    </div>
   `,
   imports: [DividerModule, RecommendationTagComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationTagSelectComponent {
   public title = input.required<string>();
-  public tags = input<TagItem[]>([]);
+  public tags = input<ColorizedTag[]>([]);
 }

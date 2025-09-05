@@ -3,7 +3,11 @@ import { RecommendationComponent } from '../recommendation/recommendation.compon
 
 @Component({
   selector: 'msc-home',
-  template: `<msc-recommendation></msc-recommendation>`,
+  template: `
+    <div class="max-w-120 mx-auto">
+      <msc-recommendation></msc-recommendation>
+    </div>
+  `,
   imports: [RecommendationComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
