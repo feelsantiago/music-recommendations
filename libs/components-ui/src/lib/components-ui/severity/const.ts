@@ -1,4 +1,4 @@
-import { Severity } from './theme.types';
+import { Severity } from './types';
 
 export const SEVERITIES: Severity[] = [
   'secondary',

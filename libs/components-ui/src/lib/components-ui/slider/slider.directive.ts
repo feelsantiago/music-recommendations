@@ -9,7 +9,7 @@ import KeenSlider, { KeenSliderInstance } from 'keen-slider';
 import { SliderIndex } from './types';
 
 @Directive({
-  selector: '[mscSlider]',
+  selector: '[mscUiSlider]',
 })
 export class SliderDirective implements AfterViewInit, OnDestroy {
   public slider!: KeenSliderInstance;

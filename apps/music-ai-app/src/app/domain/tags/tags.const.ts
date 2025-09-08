@@ -1,6 +1,6 @@
-import { GroupedTags } from './tags.types';
+import { GroupedTagsDto } from './tags.types';
 
-export const TAGS: GroupedTags = {
+export const TAGS: GroupedTagsDto = {
   genre: [
     { id: 1, name: 'Rock', type: 'genre' },
     { id: 2, name: 'Alternative Rock', type: 'genre' },

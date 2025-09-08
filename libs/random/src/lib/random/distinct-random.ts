@@ -1,34 +1,15 @@
 import { Injectable } from '@angular/core';
-
-export abstract class Random {
-  public abstract next(): number;
-  public abstract between(min: number, max: number): number;
-  public abstract range(length: number): number;
-}
+import { Random } from './random';
+import { RandomNumber } from './random-number';
 
 @Injectable()
-export class MathRandom implements Random {
-  public next(): number {
-    return Math.random();
-  }
-
-  public between(min: number, max: number): number {
-    return Math.random() * (max - min) + min;
-  }
-
-  public range(length: number): number {
-    return Math.floor(Math.random() * length);
-  }
-}
-
-@Injectable()
-export class DistinctRandom implements MathRandom {
+export class DistinctRandom implements Random {
   private _last = 0;
 
   constructor(private readonly _random: Random) {}
 
-  public static create(): DistinctRandom {
-    return new DistinctRandom(new MathRandom());
+  public static number(): DistinctRandom {
+    return new DistinctRandom(new RandomNumber());
   }
 
   public next(): number {

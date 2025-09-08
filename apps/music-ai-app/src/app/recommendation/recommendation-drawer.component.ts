@@ -9,16 +9,10 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
 import { InputTextModule } from 'primeng/inputtext';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { match } from 'ts-pattern';
-import { DistinctRandom, Random } from '../domain/random/random';
 import { Tags } from '../domain/tags/tags.service';
-import {
-  ColorizedTag,
-  GoupredColorizedTags,
-  TagType,
-} from '../domain/tags/tags.types';
-import { SeverityColorize } from '../domain/theme/colorize';
+import { GroupedTags, TagSelected, TagType } from '../domain/tags/tags.types';
 import { RecommendationTagSelectComponent } from './recommendation-tag-select.component';
 
 @Component({
@@ -77,35 +71,19 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
     ButtonModule,
     RecommendationTagSelectComponent,
   ],
-  providers: [
-    {
-      provide: Random,
-      useFactory: () => DistinctRandom.create(),
-    },
-    SeverityColorize,
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationDrawerComponnet {
   public open = model(false);
   public value = '';
-  public tags$: Observable<GoupredColorizedTags>;
+  public tags$: Observable<GroupedTags>;
 
-  public genre: ColorizedTag[] = [];
-  public mood: ColorizedTag[] = [];
-  public custom: ColorizedTag[] = [];
+  public genre: TagSelected[] = [];
+  public mood: TagSelected[] = [];
+  public custom: TagSelected[] = [];
 
-  constructor(
-    private readonly _tags: Tags,
-    private readonly _colorize: SeverityColorize,
-  ) {
-    this.tags$ = this._tags.fetch().pipe(
-      map((tags) => ({
-        genre: tags.genre.map((tag) => this._colorize.apply(tag)),
-        mood: tags.mood.map((tag) => this._colorize.apply(tag)),
-        custom: tags.custom.map((tag) => this._colorize.apply(tag)),
-      })),
-    );
+  constructor(private readonly _tags: Tags) {
+    this.tags$ = this._tags.fetch();
 
     effect(() => {
       if (!this.open()) {
@@ -114,7 +92,7 @@ export class RecommendationDrawerComponnet {
     });
   }
 
-  public onSelectedChange(selected: ColorizedTag[], type: TagType): void {
+  public onSelectedChange(selected: TagSelected[], type: TagType): void {
     match(type)
       .with('genre', () => (this.genre = selected))
       .with('mood', () => (this.mood = selected))

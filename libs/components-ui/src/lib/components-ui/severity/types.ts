@@ -4,4 +4,5 @@ export type Severity =
   | 'info'
   | 'warn'
   | 'danger'
-  | 'contrast';
+  | 'contrast'
+  | 'unset';

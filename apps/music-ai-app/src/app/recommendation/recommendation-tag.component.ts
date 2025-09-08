@@ -2,44 +2,60 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  input,
+  computed,
+  linkedSignal,
   model,
-  output,
+  Signal,
+  SkipSelf,
 } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { Tag } from 'primeng/tag';
-import { Severity } from '../domain/theme/theme.types';
-
-export type TagSelectState = 'selected' | 'deselected';
+import {
+  Severity,
+  SeverityColorize,
+  TagButtonComponent,
+} from '@music-ai/components-ui';
+import { match } from 'ts-pattern';
+import { SelectedTag } from '../domain/tags/tags.types';
 
 @Component({
   selector: 'msc-recommendation-tag',
   template: `
-    <p-tag
-      class="m-2 cursor-pointer min-h-[27px]"
-      [ngClass]="{ 'opacity-50': !selected() }"
-      [value]="value()"
-      [icon]="icon()"
+    <msc-ui-tag-button
+      [disabled]="!selected()"
+      [value]="tag().name"
       [severity]="severity()"
       (click)="onClick()"
-    ></p-tag>
+    ></msc-ui-tag-button>
   `,
-  imports: [CommonModule, ButtonModule, Tag],
+  imports: [CommonModule, TagButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationTagComponent {
-  public selectable = input<boolean>(false);
-  public severity = input<Severity>('secondary');
-  public icon = input<string>();
-  public value = input('');
-  public selected = model<boolean>(true);
-  public pressed = output();
+  public tag = model.required<SelectedTag>();
+  public severity: Signal<Severity>;
+  public selected: Signal<boolean>;
+
+  constructor(@SkipSelf() private readonly _colorize: SeverityColorize) {
+    this.severity = linkedSignal({
+      source: this.tag,
+      computation: (source, prev) => {
+        const severity = prev?.value || source.severity;
+        const tag = match(severity)
+          .with('unset', () => this._colorize.apply(source))
+          .otherwise(() => ({ ...source, severity }));
+
+        return tag.severity;
+      },
+    });
+
+    this.selected = computed(() => this.tag().state === 'selected');
+  }
 
   public onClick(): void {
-    if (this.selectable()) {
-      this.selected.update((value) => !value);
-    }
-
-    this.pressed.emit();
+    this.tag.update((tag) =>
+      match<SelectedTag['state'], SelectedTag>(tag.state)
+        .with('selected', () => ({ ...tag, state: 'unselected' }))
+        .with('unselected', () => ({ ...tag, state: 'selected' }))
+        .exhaustive(),
+    );
   }
 }

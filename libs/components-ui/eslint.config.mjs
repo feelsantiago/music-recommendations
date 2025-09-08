@@ -12,7 +12,7 @@ export default [
         'error',
         {
           type: 'attribute',
-          prefix: 'msc',
+          prefix: 'mscUi',
           style: 'camelCase',
         },
       ],
@@ -20,13 +20,12 @@ export default [
         'error',
         {
           type: 'element',
-          prefix: 'msc',
+          prefix: 'msc-ui',
           style: 'kebab-case',
         },
       ],
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       '@angular-eslint/prefer-inject': 'off',
-      '@angular-eslint/no-input-rename': 'off',
     },
   },
   {

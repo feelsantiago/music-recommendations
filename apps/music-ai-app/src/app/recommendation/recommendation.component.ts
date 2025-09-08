@@ -1,25 +1,24 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { SliderComponent, SliderItemDirective } from '@music-ai/components-ui';
 import { DrawerModule } from 'primeng/drawer';
-import { SliderComponent } from '../slider/slider.component';
-import { SliderItemDirective } from '../slider/slider-item.directive';
+import { RecommnedationControlsComponent } from './recommendation-controls.component';
+import { RecommendationDrawerComponnet } from './recommendation-drawer.component';
 import { RecommendationItemComponent } from './recommendation-item.component';
 import { RecommendationTagListComponent } from './recommendation-tag-list.component';
-import { RecommnedationControlsComponent } from './recommendation-controls.component';
 import { RecommendationTypeComponent } from './recommendation-type.component';
-import { RecommendationDrawerComponnet } from './recommendation-drawer.component';
 
 @Component({
   selector: 'msc-recommendation',
   template: `
     <msc-recommendation-drawer title="Choose..." [(open)]="drawer" />
     <msc-recommendation-type></msc-recommendation-type>
-    <msc-slider>
-      @for(recommendation of recommendations; track recommendation.id) {
-      <msc-recommendation-item [item]="recommendation.id" mscSliderItem>
-        {{ recommendation.id }}
-      </msc-recommendation-item>
+    <msc-ui-slider>
+      @for (recommendation of recommendations; track recommendation.id) {
+        <msc-recommendation-item [item]="recommendation.id" mscUiSliderItem>
+          {{ recommendation.id }}
+        </msc-recommendation-item>
       }
-    </msc-slider>
+    </msc-ui-slider>
     <div class="mt-10">
       <msc-recommendation-tag-list
         (add)="onAdd()"
