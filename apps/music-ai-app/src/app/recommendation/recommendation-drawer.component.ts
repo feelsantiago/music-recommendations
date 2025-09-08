@@ -110,7 +110,6 @@ export class RecommendationDrawerComponnet {
   }
 
   public onSelectedChange(tags: TagSelected[], type: TagType): void {
-    console.log(tags);
     match(type)
       .with('genre', () => this.genre.update(() => tags))
       .with('mood', () => this.mood.update(() => tags))
