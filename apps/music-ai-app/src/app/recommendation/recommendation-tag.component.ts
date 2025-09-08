@@ -51,10 +51,11 @@ export class RecommendationTagComponent {
   }
 
   public onClick(): void {
+    const severity = this.severity();
     this.tag.update((tag) =>
       match<SelectedTag['state'], SelectedTag>(tag.state)
-        .with('selected', () => ({ ...tag, state: 'unselected' }))
-        .with('unselected', () => ({ ...tag, state: 'selected' }))
+        .with('selected', () => ({ ...tag, severity, state: 'unselected' }))
+        .with('unselected', () => ({ ...tag, severity, state: 'selected' }))
         .exhaustive(),
     );
   }

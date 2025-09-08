@@ -1,17 +1,18 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   effect,
+  input,
   model,
+  output,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
 import { InputTextModule } from 'primeng/inputtext';
-import { Observable } from 'rxjs';
 import { match } from 'ts-pattern';
-import { Tags } from '../domain/tags/tags.service';
 import { GroupedTags, TagSelected, TagType } from '../domain/tags/tags.types';
 import { RecommendationTagSelectComponent } from './recommendation-tag-select.component';
 
@@ -24,47 +25,47 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
       header="Tags"
       styleClass="md:!w-80 lg:!w-[30rem]"
     >
-      @if (tags$ | async; as tags) {
-        <msc-recommendation-tag-select
-          title="Genre"
-          [tags]="tags.genre"
-          (selectedChange)="onSelectedChange($event, 'genre')"
-        />
-        <div class="m-10"></div>
+      <msc-recommendation-tag-select
+        title="Genre"
+        [tags]="tags().genre"
+        [selected]="genre()"
+        (selectedChange)="onSelectedChange($event, 'genre')"
+      />
+      <div class="m-10"></div>
 
-        <msc-recommendation-tag-select
-          title="Mood"
-          [tags]="tags.mood"
-          (selectedChange)="onSelectedChange($event, 'mood')"
-        />
-        <div class="m-10"></div>
+      <msc-recommendation-tag-select
+        title="Mood"
+        [tags]="tags().mood"
+        [selected]="mood()"
+        (selectedChange)="onSelectedChange($event, 'mood')"
+      />
+      <div class="m-10"></div>
 
-        <msc-recommendation-tag-select
-          title="Custom"
-          [tags]="tags.custom"
-          (selectedChange)="onSelectedChange($event, 'custom')"
-        >
-          <div class="m-2 mb-4 flex items-center gap-2">
-            <input
-              class="flex-2"
-              pSize="small"
-              type="text"
-              pInputText
-              [(ngModel)]="value"
-            />
-            <p-button
-              icon="pi pi-plus"
-              size="small"
-              severity="contrast"
-              aria-label="Save"
-            />
-          </div>
-        </msc-recommendation-tag-select>
-      }
+      <msc-recommendation-tag-select
+        title="Custom"
+        [tags]="tags().custom"
+        [selected]="custom()"
+        (selectedChange)="onSelectedChange($event, 'custom')"
+      >
+        <div class="m-2 mb-4 flex items-center gap-2">
+          <input
+            class="flex-2"
+            pSize="small"
+            type="text"
+            pInputText
+            [(ngModel)]="value"
+          />
+          <p-button
+            icon="pi pi-plus"
+            size="small"
+            severity="contrast"
+            aria-label="Save"
+          />
+        </div>
+      </msc-recommendation-tag-select>
     </p-drawer>
   `,
   imports: [
-    AsyncPipe,
     FormsModule,
     InputTextModule,
     DrawerModule,
@@ -75,28 +76,45 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
 })
 export class RecommendationDrawerComponnet {
   public open = model(false);
+  public tags = input.required<GroupedTags>();
+  public selected = input<TagSelected[]>([]);
+
+  public selectedChange = output<TagSelected[]>();
+
   public value = '';
-  public tags$: Observable<GroupedTags>;
+  public genre: WritableSignal<TagSelected[]> = signal([]);
+  public mood: WritableSignal<TagSelected[]> = signal([]);
+  public custom: WritableSignal<TagSelected[]> = signal([]);
 
-  public genre: TagSelected[] = [];
-  public mood: TagSelected[] = [];
-  public custom: TagSelected[] = [];
+  constructor() {
+    effect(() => {
+      const selected = this.selected();
+      const genre = selected.filter((tag) => tag.type === 'genre');
+      const mood = selected.filter((tag) => tag.type === 'mood');
+      const custom = selected.filter((tag) => tag.type === 'custom');
 
-  constructor(private readonly _tags: Tags) {
-    this.tags$ = this._tags.fetch();
+      this.genre.update(() => genre);
+      this.mood.update(() => mood);
+      this.custom.update(() => custom);
+    });
 
     effect(() => {
       if (!this.open()) {
-        this._tags.select([...this.genre, ...this.mood, ...this.custom]);
+        this.selectedChange.emit([
+          ...this.genre(),
+          ...this.mood(),
+          ...this.custom(),
+        ]);
       }
     });
   }
 
-  public onSelectedChange(selected: TagSelected[], type: TagType): void {
+  public onSelectedChange(tags: TagSelected[], type: TagType): void {
+    console.log(tags);
     match(type)
-      .with('genre', () => (this.genre = selected))
-      .with('mood', () => (this.mood = selected))
-      .with('custom', () => (this.custom = selected))
+      .with('genre', () => this.genre.update(() => tags))
+      .with('mood', () => this.mood.update(() => tags))
+      .with('custom', () => this.custom.update(() => tags))
       .exhaustive();
   }
 }

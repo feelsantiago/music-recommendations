@@ -1,6 +1,19 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { SliderComponent, SliderItemDirective } from '@music-ai/components-ui';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Signal,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  SeverityColorize,
+  SliderComponent,
+  SliderItemDirective,
+} from '@music-ai/components-ui';
+import { DistinctRandom, Random } from '@music-ai/random';
 import { DrawerModule } from 'primeng/drawer';
+import { Tags } from '../domain/tags/tags.service';
+import { GroupedTags, TagSelected } from '../domain/tags/tags.types';
 import { RecommnedationControlsComponent } from './recommendation-controls.component';
 import { RecommendationDrawerComponnet } from './recommendation-drawer.component';
 import { RecommendationItemComponent } from './recommendation-item.component';
@@ -10,7 +23,13 @@ import { RecommendationTypeComponent } from './recommendation-type.component';
 @Component({
   selector: 'msc-recommendation',
   template: `
-    <msc-recommendation-drawer title="Choose..." [(open)]="drawer" />
+    <msc-recommendation-drawer
+      title="Choose..."
+      [tags]="tags()"
+      [(open)]="drawer"
+      [selected]="selected()"
+      (selectedChange)="onSelectedChange($event)"
+    />
     <msc-recommendation-type></msc-recommendation-type>
     <msc-ui-slider>
       @for (recommendation of recommendations; track recommendation.id) {
@@ -21,6 +40,8 @@ import { RecommendationTypeComponent } from './recommendation-type.component';
     </msc-ui-slider>
     <div class="mt-10">
       <msc-recommendation-tag-list
+        [tags]="selected()"
+        (tagsChange)="onSelectedChange($event)"
         (add)="onAdd()"
       ></msc-recommendation-tag-list>
     </div>
@@ -38,6 +59,13 @@ import { RecommendationTypeComponent } from './recommendation-type.component';
     SliderComponent,
     SliderItemDirective,
   ],
+  providers: [
+    {
+      provide: Random,
+      useFactory: () => DistinctRandom.number(),
+    },
+    SeverityColorize,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationComponent {
@@ -54,8 +82,21 @@ export class RecommendationComponent {
   ];
 
   public drawer = signal(false);
+  public tags: Signal<GroupedTags>;
+  public selected: Signal<TagSelected[]>;
+
+  constructor(private readonly _tags: Tags) {
+    this.tags = toSignal(this._tags.fetch(), {
+      initialValue: { genre: [], mood: [], custom: [] },
+    });
+    this.selected = toSignal(this._tags.selected$, { initialValue: [] });
+  }
 
   public onAdd(): void {
     this.drawer.update(() => true);
+  }
+
+  public onSelectedChange(tags: TagSelected[]): void {
+    this._tags.select(tags);
   }
 }
