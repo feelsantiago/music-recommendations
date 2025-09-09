@@ -21,6 +21,7 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
   template: `
     <p-drawer
       [(visible)]="open"
+      (onHide)="onHide()"
       position="right"
       header="Tags"
       styleClass="md:!w-80 lg:!w-[30rem]"
@@ -97,16 +98,14 @@ export class RecommendationDrawerComponnet {
       this.mood.update(() => mood);
       this.custom.update(() => custom);
     });
+  }
 
-    effect(() => {
-      if (!this.open()) {
-        this.selectedChange.emit([
-          ...this.genre(),
-          ...this.mood(),
-          ...this.custom(),
-        ]);
-      }
-    });
+  public onHide(): void {
+    this.selectedChange.emit([
+      ...this.genre(),
+      ...this.mood(),
+      ...this.custom(),
+    ]);
   }
 
   public onSelectedChange(tags: TagSelected[], type: TagType): void {

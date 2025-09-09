@@ -41,12 +41,15 @@ import { RecommendationTypeComponent } from './recommendation-type.component';
     <div class="mt-10">
       <msc-recommendation-tag-list
         [tags]="selected()"
-        (tagsChange)="onSelectedChange($event)"
         (add)="onAdd()"
+        (tagsChange)="onSelectedChange($event)"
       ></msc-recommendation-tag-list>
     </div>
     <div class="mt-10">
-      <msc-recommendation-controls></msc-recommendation-controls>
+      <msc-recommendation-controls
+        (onPrev)="onPrev()"
+        (onNext)="onNext()"
+      ></msc-recommendation-controls>
     </div>
   `,
   imports: [
@@ -85,6 +88,8 @@ export class RecommendationComponent {
   public tags: Signal<GroupedTags>;
   public selected: Signal<TagSelected[]>;
 
+  // private readonly _slider = viewChild.required(SliderComponent);
+
   constructor(private readonly _tags: Tags) {
     this.tags = toSignal(this._tags.fetch(), {
       initialValue: { genre: [], mood: [], custom: [] },
@@ -98,5 +103,13 @@ export class RecommendationComponent {
 
   public onSelectedChange(tags: TagSelected[]): void {
     this._tags.select(tags);
+  }
+
+  public onNext(): void {
+    // this._slider().next();
+  }
+
+  public onPrev(): void {
+    // this._slider().prev();
   }
 }
