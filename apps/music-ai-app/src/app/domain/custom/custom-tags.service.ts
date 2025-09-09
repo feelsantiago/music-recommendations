@@ -22,6 +22,20 @@ export class CustomTags {
     this._tags$.next([...this._tags$.getValue(), tag]);
   }
 
+  public remove(tag: Tag): void {
+    this._storage.fetch<Tag[]>(this._key).match({
+      some: (tags) => {
+        const remaining = tags.filter((t) => t.id !== tag.id);
+        this._storage.save(this._key, remaining);
+        this._tags$.next(remaining);
+      },
+      none: () => {
+        this._storage.save(this._key, []);
+        this._tags$.next([]);
+      },
+    });
+  }
+
   public load(): Observable<Tag[]> {
     const tags = this._storage.fetch<Tag[]>(this._key).match<Tag[], Tag[]>({
       some: (tags) => tags,

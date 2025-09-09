@@ -54,6 +54,7 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
         [tags]="(custom$ | async) || []"
         [selected]="custom()"
         [removable]="true"
+        (removed)="onCustomRemoved($event)"
         (selectedChange)="onSelectedChange($event, 'custom')"
       >
         <msc-recommendation-custom
@@ -118,5 +119,10 @@ export class RecommendationDrawerComponnet implements OnInit {
   public onCustomTag(tag: TagSelected): void {
     this._custom.save(tag);
     this.custom.update((tags) => [...tags, tag]);
+  }
+
+  public onCustomRemoved(tag: Tag): void {
+    this._custom.remove(tag);
+    this.custom.update((tags) => tags.filter((t) => t.name !== tag.name));
   }
 }

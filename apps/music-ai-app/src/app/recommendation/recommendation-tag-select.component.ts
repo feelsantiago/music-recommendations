@@ -38,6 +38,7 @@ function unselectTags(tag: Tag[]): SelectedTag[] {
           [tag]="tag"
           [removable]="removable()"
           (tagChange)="onTagChange($event)"
+          (removed)="onTagRemoved($event)"
         />
       }
     </div>
@@ -51,6 +52,7 @@ export class RecommendationTagSelectComponent {
   public unselected = input([], { transform: unselectTags, alias: 'tags' });
   public removable = input(false);
   public selectedChange = output<TagSelected[]>();
+  public removed = output<Tag>();
 
   public tags: Signal<SelectedTag[]>;
 
@@ -77,6 +79,15 @@ export class RecommendationTagSelectComponent {
       .exhaustive();
 
     this.selectedChange.emit(selected);
+  }
+
+  public onTagRemoved(tag: SelectedTag): void {
+    if (tag.state === 'selected') {
+      const selected = this.selected().filter((t) => t.id !== tag.id);
+      this.selectedChange.emit(selected);
+    }
+
+    this.removed.emit(tag);
   }
 
   public onClear(): void {
