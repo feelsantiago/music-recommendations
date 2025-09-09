@@ -3,6 +3,7 @@ import {
   Component,
   Signal,
   signal,
+  viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -47,8 +48,8 @@ import { RecommendationTypeComponent } from './recommendation-type.component';
     </div>
     <div class="mt-10">
       <msc-recommendation-controls
-        (onPrev)="onPrev()"
-        (onNext)="onNext()"
+        (prev)="onPrev()"
+        (next)="onNext()"
       ></msc-recommendation-controls>
     </div>
   `,
@@ -88,7 +89,7 @@ export class RecommendationComponent {
   public tags: Signal<GroupedTags>;
   public selected: Signal<TagSelected[]>;
 
-  // private readonly _slider = viewChild.required(SliderComponent);
+  private readonly _slider = viewChild.required(SliderComponent);
 
   constructor(private readonly _tags: Tags) {
     this.tags = toSignal(this._tags.fetch(), {
@@ -106,10 +107,10 @@ export class RecommendationComponent {
   }
 
   public onNext(): void {
-    // this._slider().next();
+    this._slider().next();
   }
 
   public onPrev(): void {
-    // this._slider().prev();
+    this._slider().prev();
   }
 }

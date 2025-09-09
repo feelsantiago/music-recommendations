@@ -24,6 +24,14 @@ export class SliderDirective implements AfterViewInit, OnDestroy {
     });
   }
 
+  public next(): void {
+    this.slider.next();
+  }
+
+  public prev(): void {
+    this.slider.prev();
+  }
+
   public ngOnDestroy(): void {
     this.slider.destroy();
   }

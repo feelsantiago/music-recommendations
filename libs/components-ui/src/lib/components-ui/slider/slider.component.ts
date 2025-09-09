@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  output,
+  viewChild,
+} from '@angular/core';
 import { SliderDirective } from './slider.directive';
 import { SliderIndex } from './types';
 
@@ -17,4 +22,13 @@ import { SliderIndex } from './types';
 })
 export class SliderComponent {
   public slideChanged = output<SliderIndex>();
+  private readonly _slider = viewChild.required(SliderDirective);
+
+  public next(): void {
+    this._slider().next();
+  }
+
+  public prev(): void {
+    this._slider().prev();
+  }
 }
