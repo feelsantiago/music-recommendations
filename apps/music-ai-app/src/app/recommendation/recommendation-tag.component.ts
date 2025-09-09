@@ -3,8 +3,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  input,
   linkedSignal,
   model,
+  output,
   Signal,
   SkipSelf,
 } from '@angular/core';
@@ -23,7 +25,9 @@ import { SelectedTag } from '../domain/tags/tags.types';
       [disabled]="!selected()"
       [value]="tag().name"
       [severity]="severity()"
+      [removable]="removable()"
       (click)="onClick()"
+      (removed)="removed.emit(tag())"
     ></msc-ui-tag-button>
   `,
   imports: [CommonModule, TagButtonComponent],
@@ -31,8 +35,10 @@ import { SelectedTag } from '../domain/tags/tags.types';
 })
 export class RecommendationTagComponent {
   public tag = model.required<SelectedTag>();
+  public removable = input(false);
   public severity: Signal<Severity>;
   public selected: Signal<boolean>;
+  public removed = output<SelectedTag>();
 
   constructor(@SkipSelf() private readonly _colorize: SeverityColorize) {
     this.severity = linkedSignal({

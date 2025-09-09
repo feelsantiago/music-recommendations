@@ -53,6 +53,7 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
         title="Custom"
         [tags]="(custom$ | async) || []"
         [selected]="custom()"
+        [removable]="true"
         (selectedChange)="onSelectedChange($event, 'custom')"
       >
         <msc-recommendation-custom

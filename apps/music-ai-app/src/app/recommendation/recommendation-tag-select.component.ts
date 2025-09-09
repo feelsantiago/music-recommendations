@@ -34,7 +34,11 @@ function unselectTags(tag: Tag[]): SelectedTag[] {
     <ng-content></ng-content>
     <div class="overflow-y-auto max-h-100">
       @for (tag of tags(); track tag.id) {
-        <msc-recommendation-tag [tag]="tag" (tagChange)="onTagChange($event)" />
+        <msc-recommendation-tag
+          [tag]="tag"
+          [removable]="removable()"
+          (tagChange)="onTagChange($event)"
+        />
       }
     </div>
   `,
@@ -45,6 +49,7 @@ export class RecommendationTagSelectComponent {
   public title = input.required<string>();
   public selected = input<TagSelected[]>([]);
   public unselected = input([], { transform: unselectTags, alias: 'tags' });
+  public removable = input(false);
   public selectedChange = output<TagSelected[]>();
 
   public tags: Signal<SelectedTag[]>;
