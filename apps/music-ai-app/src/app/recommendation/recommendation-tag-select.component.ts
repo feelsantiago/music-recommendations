@@ -6,6 +6,7 @@ import {
   output,
   Signal,
 } from '@angular/core';
+import { BadgeModule } from 'primeng/badge';
 import { DividerModule } from 'primeng/divider';
 import { match } from 'ts-pattern';
 import { SelectedTag, Tag, TagSelected } from '../domain/tags/tags.types';
@@ -19,7 +20,16 @@ function unselectTags(tag: Tag[]): SelectedTag[] {
   selector: 'msc-recommendation-tag-select',
   template: `
     <p-divider align="left">
-      <h1>{{ title() }}</h1>
+      <h1 class="relative">
+        {{ title() }}
+        @if (selected().length > 0) {
+          <span
+            class="absolute inset-y-0 ml-2 cursor-pointer"
+            (click)="onClear()"
+            ><p-badge [value]="selected().length" severity="contrast"></p-badge
+          ></span>
+        }
+      </h1>
     </p-divider>
     <ng-content></ng-content>
     <div class="overflow-y-auto max-h-100">
@@ -28,14 +38,13 @@ function unselectTags(tag: Tag[]): SelectedTag[] {
       }
     </div>
   `,
-  imports: [DividerModule, RecommendationTagComponent],
+  imports: [DividerModule, BadgeModule, RecommendationTagComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationTagSelectComponent {
   public title = input.required<string>();
   public selected = input<TagSelected[]>([]);
   public unselected = input([], { transform: unselectTags, alias: 'tags' });
-
   public selectedChange = output<TagSelected[]>();
 
   public tags: Signal<SelectedTag[]>;
@@ -46,7 +55,7 @@ export class RecommendationTagSelectComponent {
       const selected = this.selected();
 
       return tags.map((unselected) => {
-        const _selected = selected.find((tag) => tag.id === unselected.id);
+        const _selected = selected.find((tag) => tag.name === unselected.name);
         return _selected || unselected;
       });
     });
@@ -63,5 +72,9 @@ export class RecommendationTagSelectComponent {
       .exhaustive();
 
     this.selectedChange.emit(selected);
+  }
+
+  public onClear(): void {
+    this.selectedChange.emit([]);
   }
 }

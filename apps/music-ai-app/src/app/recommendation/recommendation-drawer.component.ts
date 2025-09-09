@@ -1,19 +1,26 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   effect,
   input,
   model,
+  OnInit,
   output,
   signal,
   WritableSignal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
-import { InputTextModule } from 'primeng/inputtext';
+import { Observable, startWith } from 'rxjs';
 import { match } from 'ts-pattern';
-import { GroupedTags, TagSelected, TagType } from '../domain/tags/tags.types';
+import { CustomTags } from '../domain/custom/custom-tags.service';
+import {
+  GroupedTags,
+  Tag,
+  TagSelected,
+  TagType,
+} from '../domain/tags/tags.types';
+import { RecommendationCustomComponent } from './recommendation-custom.component';
 import { RecommendationTagSelectComponent } from './recommendation-tag-select.component';
 
 @Component({
@@ -44,50 +51,37 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
 
       <msc-recommendation-tag-select
         title="Custom"
-        [tags]="tags().custom"
+        [tags]="(custom$ | async) || []"
         [selected]="custom()"
         (selectedChange)="onSelectedChange($event, 'custom')"
       >
-        <div class="m-2 mb-4 flex items-center gap-2">
-          <input
-            class="flex-2"
-            pSize="small"
-            type="text"
-            pInputText
-            [(ngModel)]="value"
-          />
-          <p-button
-            icon="pi pi-plus"
-            size="small"
-            severity="contrast"
-            aria-label="Save"
-          />
-        </div>
+        <msc-recommendation-custom
+          (tag)="onCustomTag($event)"
+        ></msc-recommendation-custom>
       </msc-recommendation-tag-select>
     </p-drawer>
   `,
   imports: [
-    FormsModule,
-    InputTextModule,
+    AsyncPipe,
     DrawerModule,
-    ButtonModule,
     RecommendationTagSelectComponent,
+    RecommendationCustomComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecommendationDrawerComponnet {
+export class RecommendationDrawerComponnet implements OnInit {
   public open = model(false);
   public tags = input.required<GroupedTags>();
   public selected = input<TagSelected[]>([]);
 
   public selectedChange = output<TagSelected[]>();
 
-  public value = '';
+  public custom$!: Observable<Tag[]>;
   public genre: WritableSignal<TagSelected[]> = signal([]);
   public mood: WritableSignal<TagSelected[]> = signal([]);
   public custom: WritableSignal<TagSelected[]> = signal([]);
 
-  constructor() {
+  constructor(private readonly _custom: CustomTags) {
     effect(() => {
       const selected = this.selected();
       const genre = selected.filter((tag) => tag.type === 'genre');
@@ -98,6 +92,10 @@ export class RecommendationDrawerComponnet {
       this.mood.update(() => mood);
       this.custom.update(() => custom);
     });
+  }
+
+  public ngOnInit(): void {
+    this.custom$ = this._custom.tags$.pipe(startWith(this.tags().custom));
   }
 
   public onHide(): void {
@@ -114,5 +112,10 @@ export class RecommendationDrawerComponnet {
       .with('mood', () => this.mood.update(() => tags))
       .with('custom', () => this.custom.update(() => tags))
       .exhaustive();
+  }
+
+  public onCustomTag(tag: TagSelected): void {
+    this._custom.save(tag);
+    this.custom.update((tags) => [...tags, tag]);
   }
 }

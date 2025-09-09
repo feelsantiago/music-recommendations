@@ -13,6 +13,8 @@ import {
 } from '@music-ai/components-ui';
 import { DistinctRandom, Random } from '@music-ai/random';
 import { DrawerModule } from 'primeng/drawer';
+import { forkJoin, map } from 'rxjs';
+import { CustomTags } from '../domain/custom/custom-tags.service';
 import { Tags } from '../domain/tags/tags.service';
 import { GroupedTags, TagSelected } from '../domain/tags/tags.types';
 import { RecommnedationControlsComponent } from './recommendation-controls.component';
@@ -91,8 +93,16 @@ export class RecommendationComponent {
 
   private readonly _slider = viewChild.required(SliderComponent);
 
-  constructor(private readonly _tags: Tags) {
-    this.tags = toSignal(this._tags.fetch(), {
+  constructor(
+    private readonly _tags: Tags,
+    private readonly _custom: CustomTags,
+  ) {
+    const tags$ = forkJoin({
+      tags: this._tags.fetch(),
+      custom: this._custom.load(),
+    }).pipe(map(({ tags, custom }) => ({ ...tags, custom })));
+
+    this.tags = toSignal(tags$, {
       initialValue: { genre: [], mood: [], custom: [] },
     });
     this.selected = toSignal(this._tags.selected$, { initialValue: [] });

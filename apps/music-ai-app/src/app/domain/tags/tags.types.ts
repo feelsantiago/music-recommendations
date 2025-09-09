@@ -2,7 +2,7 @@ import { Severity } from '@music-ai/components-ui';
 export type TagType = 'genre' | 'mood' | 'custom';
 
 export interface Tag {
-  id: number;
+  id: string;
   name: string;
   type: TagType;
   severity: Severity;
