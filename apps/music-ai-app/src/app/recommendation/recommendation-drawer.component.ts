@@ -1,17 +1,14 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   effect,
   input,
   model,
-  OnInit,
   output,
   signal,
   WritableSignal,
 } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
-import { Observable, startWith } from 'rxjs';
 import { match } from 'ts-pattern';
 import { CustomTags } from '../domain/custom/custom-tags.service';
 import {
@@ -51,7 +48,7 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
 
       <msc-recommendation-tag-select
         title="Custom"
-        [tags]="(custom$ | async) || []"
+        [tags]="tags().custom"
         [selected]="custom()"
         [removable]="true"
         (removed)="onCustomRemoved($event)"
@@ -64,21 +61,19 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
     </p-drawer>
   `,
   imports: [
-    AsyncPipe,
     DrawerModule,
     RecommendationTagSelectComponent,
     RecommendationCustomComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecommendationDrawerComponnet implements OnInit {
+export class RecommendationDrawerComponnet {
   public open = model(false);
   public tags = input.required<GroupedTags>();
   public selected = input<TagSelected[]>([]);
 
   public selectedChange = output<TagSelected[]>();
 
-  public custom$!: Observable<Tag[]>;
   public genre: WritableSignal<TagSelected[]> = signal([]);
   public mood: WritableSignal<TagSelected[]> = signal([]);
   public custom: WritableSignal<TagSelected[]> = signal([]);
@@ -94,10 +89,6 @@ export class RecommendationDrawerComponnet implements OnInit {
       this.mood.update(() => mood);
       this.custom.update(() => custom);
     });
-  }
-
-  public ngOnInit(): void {
-    this.custom$ = this._custom.tags$.pipe(startWith(this.tags().custom));
   }
 
   public onHide(): void {
