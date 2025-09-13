@@ -1,47 +1,42 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap } from 'rxjs';
+import { rxState } from '@rx-angular/state';
+import { rxEffects } from '@rx-angular/state/effects';
 import { AppStorage } from '../../storage/app-storage';
 import { Tag } from '../tags/tags.types';
 
+interface CustomTagsState {
+  tags: Tag[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class CustomTags {
-  private readonly _tags$ = new BehaviorSubject<Tag[]>([]);
-
-  public readonly tags$ = this._tags$.asObservable();
+  private readonly _state = rxState<CustomTagsState>(({ set }) =>
+    set({ tags: [] }),
+  );
+  private readonly _effects = rxEffects();
 
   private _key = 'custom_tags';
 
-  constructor(private readonly _storage: AppStorage) {}
+  public readonly tags$ = this._state.select('tags');
 
-  public save(tag: Tag): void {
-    this._storage.fetch<Tag[]>(this._key).match({
-      some: (tags) => this._storage.save(this._key, [...tags, tag]),
-      none: () => this._storage.save(this._key, [tag]),
-    });
-
-    this._tags$.next([...this._tags$.getValue(), tag]);
-  }
-
-  public remove(tag: Tag): void {
-    this._storage.fetch<Tag[]>(this._key).match({
-      some: (tags) => {
-        const remaining = tags.filter((t) => t.id !== tag.id);
-        this._storage.save(this._key, remaining);
-        this._tags$.next(remaining);
-      },
-      none: () => {
-        this._storage.save(this._key, []);
-        this._tags$.next([]);
-      },
-    });
-  }
-
-  public load(): Observable<Tag[]> {
+  constructor(private readonly _storage: AppStorage) {
     const tags = this._storage.fetch<Tag[]>(this._key).match<Tag[], Tag[]>({
       some: (tags) => tags,
       none: () => [],
     });
 
-    return of(tags).pipe(tap((tags) => this._tags$.next(tags)));
+    this._state.set('tags', () => tags);
+
+    this._effects.register(this.tags$, (tags) =>
+      this._storage.save(this._key, tags),
+    );
+  }
+
+  public save(tag: Tag): void {
+    this._state.set('tags', ({ tags }) => [...tags, tag]);
+  }
+
+  public remove(tag: Tag): void {
+    this._state.set('tags', ({ tags }) => tags.filter((t) => t.id !== tag.id));
   }
 }
