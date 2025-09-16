@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@music-ai/common": ["libs/common/src/index.ts"],
       "@music-ai/components-ui": ["libs/components-ui/src/index.ts"],
       "@music-ai/random": ["libs/random/src/index.ts"]
     }

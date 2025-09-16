@@ -76,6 +76,7 @@
     "jest-environment-node": "^30.0.2",
     "jest-preset-angular": "~15.0.0",
     "jest-util": "^30.0.2",
+    "jsonc-eslint-parser": "^2.1.0",
     "nx": "21.4.1",
     "prettier": "^3.6.0",
     "prettier-plugin-organize-imports": "^4.2.0",
