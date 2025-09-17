@@ -9,7 +9,7 @@ import {
 import { BadgeModule } from 'primeng/badge';
 import { DividerModule } from 'primeng/divider';
 import { match } from 'ts-pattern';
-import { SelectedTag, Tag, TagSelected } from '../domain/tags/tags.types';
+import { SelectedTag, Tag, TagSelected } from '../../domain/tags/tags.types';
 import { RecommendationTagComponent } from './recommendation-tag.component';
 
 function unselectTags(tag: Tag[]): SelectedTag[] {

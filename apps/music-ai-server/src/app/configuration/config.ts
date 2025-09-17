@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Option } from '@sapphire/result';
 import { match } from 'ts-pattern';
-import { Environment, SessionConfig } from './types';
+import { CsrfConfig, Environment, SessionConfig } from './types';
 
 @Injectable()
 export class Config {
@@ -41,10 +41,15 @@ export class Config {
     return { secret, store };
   }
 
-  public csrf(): string {
-    return Option.from(() => this._config.get<string>('CSRF_SECRET')).unwrapOr(
-      '',
-    );
+  public csrf(): CsrfConfig {
+    const secret = Option.from(() =>
+      this._config.get<string>('CSRF_SECRET'),
+    ).unwrapOr('');
+    const name = Option.from(() =>
+      this._config.get<string>('CSRF_COOKIE_NAME'),
+    ).unwrapOr('');
+
+    return { secret, name };
   }
 
   public redis(): string {

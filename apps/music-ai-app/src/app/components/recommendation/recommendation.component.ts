@@ -13,8 +13,8 @@ import {
 } from '@music-ai/components-ui';
 import { DistinctRandom, Random } from '@music-ai/random';
 import { DrawerModule } from 'primeng/drawer';
-import { Tags } from '../domain/tags/tags.service';
-import { GroupedTags, TagSelected } from '../domain/tags/tags.types';
+import { Tags } from '../../domain/tags/tags.service';
+import { GroupedTags, TagSelected } from '../../domain/tags/tags.types';
 import { RecommnedationControlsComponent } from './recommendation-controls.component';
 import { RecommendationDrawerComponnet } from './recommendation-drawer.component';
 import { RecommendationItemComponent } from './recommendation-item.component';

@@ -1,31 +1,50 @@
-import { INestApplication, Injectable } from '@nestjs/common';
-import { Option, some } from '@sapphire/result';
-import { CsrfTokenGenerator, doubleCsrf } from 'csrf-csrf';
+import { INestApplication, Inject, Injectable } from '@nestjs/common';
+import {
+  CsrfRequestValidator,
+  CsrfTokenCookieOptions,
+  CsrfTokenGenerator,
+  doubleCsrf,
+  DoubleCsrfProtection,
+} from 'csrf-csrf';
 import { Request, Response } from 'express';
 import { Config } from '../config';
-import { ServerConfiguration } from '../types';
+import { COOKIE_SETTINGS, ServerConfiguration } from '../types';
 
 @Injectable()
 export class Csrf implements ServerConfiguration {
-  private _generator: Option<CsrfTokenGenerator>;
+  public middleware!: DoubleCsrfProtection;
 
-  constructor(private readonly _config: Config) {}
+  private _generator!: CsrfTokenGenerator;
+  private _validate!: CsrfRequestValidator;
+
+  constructor(
+    private readonly _config: Config,
+    @Inject(COOKIE_SETTINGS) private readonly _cookie: CsrfTokenCookieOptions,
+  ) {}
 
   public setup(app: INestApplication): void {
-    const { generateCsrfToken, doubleCsrfProtection } = doubleCsrf({
-      getSecret: () => this._config.csrf(),
-      getSessionIdentifier: (req) => req.session.id,
-    });
+    const csrf = this._config.csrf();
 
-    this._generator = some(generateCsrfToken);
+    const { generateCsrfToken, doubleCsrfProtection, validateRequest } =
+      doubleCsrf({
+        getSecret: () => csrf.secret,
+        getSessionIdentifier: (req) => req.session.id,
+        cookieName: csrf.name,
+        cookieOptions: this._cookie,
+      });
+
+    this._generator = generateCsrfToken;
+    this._validate = validateRequest;
+    this.middleware = doubleCsrfProtection;
+
     app.use(doubleCsrfProtection);
   }
 
   public token(req: Request, res: Response): string {
-    return this._generator.match({
-      some: (generator) => generator(req, res),
-      // TODO: return error
-      none: () => '',
-    });
+    return this._generator(req, res);
+  }
+
+  public validate(req: Request): boolean {
+    return this._validate(req);
   }
 }

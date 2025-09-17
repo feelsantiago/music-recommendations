@@ -9,7 +9,10 @@ export class Cors implements ServerConfiguration {
 
   constructor(private readonly _config: Config) {
     this._origin = match(this._config.env())
-      .with('development', () => '*')
+      .with('development', () => [
+        `http://localhost:${this._config.port()}`,
+        'http://localhost:4200',
+      ])
       .otherwise(() => [this._config.appUrl()]);
   }
 
@@ -19,6 +22,7 @@ export class Cors implements ServerConfiguration {
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       preflightContinue: false,
       optionsSuccessStatus: 204,
+      credentials: true,
     });
   }
 }

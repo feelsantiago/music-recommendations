@@ -1,20 +1,24 @@
-import { Duration } from '@music-ai/common';
 import { INestApplication, Inject, Injectable } from '@nestjs/common';
 import { RedisStore } from 'connect-redis';
-import session from 'express-session';
+import session, { CookieOptions } from 'express-session';
 import { RedisClientType } from 'redis';
 import { Config } from '../config';
-import { REDIS_CONNECTION, ServerConfiguration, SessionConfig } from '../types';
+import {
+  COOKIE_SETTINGS,
+  REDIS_CONNECTION,
+  ServerConfiguration,
+  SessionConfig,
+} from '../types';
 
 @Injectable()
 export class Session implements ServerConfiguration {
   private readonly _session: SessionConfig;
   private readonly _store: RedisStore;
-  private readonly _maxAge = Duration.days(1);
 
   constructor(
     private readonly _config: Config,
     @Inject(REDIS_CONNECTION) private readonly _redis: RedisClientType,
+    @Inject(COOKIE_SETTINGS) private readonly _cookie: CookieOptions,
   ) {
     this._session = this._config.session();
     this._store = new RedisStore({
@@ -29,11 +33,8 @@ export class Session implements ServerConfiguration {
         store: this._store,
         secret: this._session.secret,
         resave: false,
-        saveUninitialized: false,
-        cookie: {
-          maxAge: this._maxAge.calculate(),
-          secure: this._config.env() === 'production',
-        },
+        saveUninitialized: true,
+        cookie: this._cookie,
       }),
     );
   }

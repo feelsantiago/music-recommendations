@@ -10,13 +10,13 @@ import {
 } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 import { match } from 'ts-pattern';
-import { CustomTags } from '../domain/custom/custom-tags.service';
+import { CustomTags } from '../../domain/custom/custom-tags.service';
 import {
   GroupedTags,
   Tag,
   TagSelected,
   TagType,
-} from '../domain/tags/tags.types';
+} from '../../domain/tags/tags.types';
 import { RecommendationCustomComponent } from './recommendation-custom.component';
 import { RecommendationTagSelectComponent } from './recommendation-tag-select.component';
 

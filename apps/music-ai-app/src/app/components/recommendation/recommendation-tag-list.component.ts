@@ -7,7 +7,7 @@ import {
   Signal,
 } from '@angular/core';
 import { TagButtonComponent } from '@music-ai/components-ui';
-import { TagSelected } from '../domain/tags/tags.types';
+import { TagSelected } from '../../domain/tags/tags.types';
 import { RecommendationTagComponent } from './recommendation-tag.component';
 
 type MaxTagList = number;

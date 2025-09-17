@@ -1,3 +1,4 @@
+import { provideHttpClient, withXsrfConfiguration } from '@angular/common/http';
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
@@ -14,6 +15,12 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),
+    provideHttpClient(
+      withXsrfConfiguration({
+        // cookieName: '__Host-psifi.x-csrf-token',
+        cookieName: 'CSRF_TOKEN',
+      }),
+    ),
     providePrimeNG({
       theme: {
         preset: MusicAppTheme,

@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SeverityColorize } from '@music-ai/components-ui';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { TagSelected } from '../domain/tags/tags.types';
+import { TagSelected } from '../../domain/tags/tags.types';
 
 @Component({
   selector: 'msc-recommendation-custom',

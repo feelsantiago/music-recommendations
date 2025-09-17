@@ -1,5 +1,7 @@
+import { Duration } from '@music-ai/common';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { CookieOptions } from 'express-session';
 import { createClient } from 'redis';
 import { Config } from './config';
 import { Cookie } from './configs/cookie';
@@ -8,7 +10,12 @@ import { Csrf } from './configs/csrf';
 import { Helmet } from './configs/helmet';
 import { Session } from './configs/session';
 import { Configuration } from './configuration';
-import { REDIS_CONNECTION, SERVER_CONFIGURATIONS } from './types';
+import {
+  COOKIE_MAX_AGE,
+  COOKIE_SETTINGS,
+  REDIS_CONNECTION,
+  SERVER_CONFIGURATIONS,
+} from './types';
 
 @Module({
   imports: [ConfigModule.forRoot()],
@@ -35,9 +42,23 @@ import { REDIS_CONNECTION, SERVER_CONFIGURATIONS } from './types';
       provide: REDIS_CONNECTION,
       useFactory: async (config: Config) => {
         const url = config.redis();
-        return createClient({ url });
+        return await createClient({ url }).connect();
       },
       inject: [Config],
+    },
+    {
+      provide: COOKIE_MAX_AGE,
+      useValue: Duration.days(1),
+    },
+    {
+      provide: COOKIE_SETTINGS,
+      useFactory: (config: Config, duration: Duration): CookieOptions => ({
+        httpOnly: true,
+        sameSite: config.env() === 'production' ? 'strict' : 'lax',
+        secure: config.env() === 'production',
+        maxAge: duration.calculate(),
+      }),
+      inject: [Config, COOKIE_MAX_AGE],
     },
   ],
   exports: [Configuration, Csrf, Config, REDIS_CONNECTION],

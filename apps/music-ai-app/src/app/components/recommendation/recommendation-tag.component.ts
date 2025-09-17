@@ -16,7 +16,7 @@ import {
   TagButtonComponent,
 } from '@music-ai/components-ui';
 import { match } from 'ts-pattern';
-import { SelectedTag } from '../domain/tags/tags.types';
+import { SelectedTag } from '../../domain/tags/tags.types';
 
 @Component({
   selector: 'msc-recommendation-tag',

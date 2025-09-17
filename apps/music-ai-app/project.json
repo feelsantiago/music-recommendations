@@ -49,6 +49,9 @@
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "options": {
+        "proxyConfig": "apps/music-ai-app/src/proxy.conf.json"
+      },
       "configurations": {
         "production": {
           "buildTarget": "music-ai-app:build:production"
