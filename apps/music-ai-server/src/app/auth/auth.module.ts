@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { AuthController } from './auth.controller';
-import { SessionInterceptor } from './interceptors/session.interceptor';
+import { RegenerateSessionInterceptor } from './interceptors/regenerate-session.interceptor';
 
 @Module({
   controllers: [AuthController],
-  providers: [SessionInterceptor],
+  providers: [RegenerateSessionInterceptor],
   imports: [ConfigurationModule],
   exports: [],
 })

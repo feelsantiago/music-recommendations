@@ -10,7 +10,7 @@ import { from, Observable, switchMap } from 'rxjs';
 import { promisify } from 'util';
 
 @Injectable()
-export class SessionInterceptor implements NestInterceptor {
+export class RegenerateSessionInterceptor implements NestInterceptor {
   public intercept(
     context: ExecutionContext,
     next: CallHandler,

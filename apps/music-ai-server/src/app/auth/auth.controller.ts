@@ -6,13 +6,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CsrfToken } from './decorators/csrf-token.decorator';
-import { SessionInterceptor } from './interceptors/session.interceptor';
+import { RegenerateSessionInterceptor } from './interceptors/regenerate-session.interceptor';
 
 @Controller('auth')
 export class AuthController {
   @Get('session')
   @HttpCode(200)
-  @UseInterceptors(SessionInterceptor)
+  @UseInterceptors(RegenerateSessionInterceptor)
   public session(@CsrfToken() csrf: string): unknown {
     return { csrf };
   }
