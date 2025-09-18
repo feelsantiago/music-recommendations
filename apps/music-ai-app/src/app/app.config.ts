@@ -1,4 +1,9 @@
-import { provideHttpClient, withXsrfConfiguration } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptorsFromDi,
+  withXsrfConfiguration,
+} from '@angular/common/http';
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
@@ -9,6 +14,7 @@ import { provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import { appRoutes } from './app.routes';
 import { MusicAppTheme } from './app.theme';
+import { CsrfInterceptor } from './interceptors/csrf.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +25,9 @@ export const appConfig: ApplicationConfig = {
       withXsrfConfiguration({
         // cookieName: '__Host-psifi.x-csrf-token',
         cookieName: 'CSRF_TOKEN',
+        headerName: 'x-csrf-token',
       }),
+      withInterceptorsFromDi(),
     ),
     providePrimeNG({
       theme: {
@@ -27,5 +35,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideRouter(appRoutes),
+    { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },
   ],
 };
