@@ -4,6 +4,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { ConfigurationModule } from './configuration/configuration.module';
+import { TagModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ConfigurationModule } from './configuration/configuration.module';
     }),
     ConfigurationModule,
     AuthModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [

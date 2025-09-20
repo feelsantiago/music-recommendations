@@ -15,7 +15,6 @@ export class CustomTags {
     set({ tags: [] }),
   );
   private readonly _effects = rxEffects();
-
   private _key = 'custom_tags';
 
   public readonly tags$ = this._state.select('tags');

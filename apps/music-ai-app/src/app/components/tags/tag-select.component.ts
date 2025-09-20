@@ -15,14 +15,14 @@ import {
   TagSelection,
   TagUnselected,
 } from '../../domain/tags/tags.types';
-import { RecommendationTagComponent } from './recommendation-tag.component';
+import { TagComponent } from './tag.component';
 
 function unselectTags(tag: TagColorful[]): TagUnselected[] {
   return tag.map((tag) => ({ ...tag, state: 'unselected' }));
 }
 
 @Component({
-  selector: 'msc-recommendation-tag-select',
+  selector: 'msc-tag-select',
   template: `
     <p-divider align="left">
       <h1 class="relative">
@@ -39,7 +39,7 @@ function unselectTags(tag: TagColorful[]): TagUnselected[] {
     <ng-content></ng-content>
     <div class="overflow-y-auto max-h-100">
       @for (tag of tags(); track tag.id) {
-        <msc-recommendation-tag
+        <msc-tag
           [tag]="tag"
           [removable]="removable()"
           (tagChange)="onTagChange($event)"
@@ -48,10 +48,10 @@ function unselectTags(tag: TagColorful[]): TagUnselected[] {
       }
     </div>
   `,
-  imports: [DividerModule, BadgeModule, RecommendationTagComponent],
+  imports: [DividerModule, BadgeModule, TagComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecommendationTagSelectComponent {
+export class TagSelectComponent {
   public title = input.required<string>();
   public selected = input<TagSelected[]>([]);
   public unselected = input([], { transform: unselectTags, alias: 'tags' });

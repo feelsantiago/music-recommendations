@@ -19,7 +19,7 @@ import { match } from 'ts-pattern';
 import { TagSelection } from '../../domain/tags/tags.types';
 
 @Component({
-  selector: 'msc-recommendation-tag',
+  selector: 'msc-tag',
   template: `
     <msc-ui-tag-button
       [disabled]="!selected()"
@@ -33,7 +33,7 @@ import { TagSelection } from '../../domain/tags/tags.types';
   imports: [CommonModule, TagButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecommendationTagComponent {
+export class TagComponent {
   public tag = model.required<TagSelection>();
   public removable = input(false);
   public severity: Signal<Severity>;

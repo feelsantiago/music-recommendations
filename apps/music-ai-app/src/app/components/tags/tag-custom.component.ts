@@ -6,7 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TagSelected } from '../../domain/tags/tags.types';
 
 @Component({
-  selector: 'msc-recommendation-custom',
+  selector: 'msc-tag-custom',
   template: `
     <div class="m-2 mb-4 flex items-center gap-2">
       <input
@@ -29,7 +29,7 @@ import { TagSelected } from '../../domain/tags/tags.types';
   imports: [FormsModule, InputTextModule, ButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecommendationCustomComponent {
+export class TagCustomComponent {
   public tag = output<TagSelected>();
   public value = '';
 

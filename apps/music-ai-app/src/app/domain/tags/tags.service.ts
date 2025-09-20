@@ -36,6 +36,12 @@ export class Tags {
     this._state.set('selected', () => tags);
   }
 
+  public unselect(tag: TagSelected): void {
+    this._state.set('selected', ({ selected: tags }) =>
+      tags.filter((selected) => selected.name !== tag.name),
+    );
+  }
+
   public fetch(): Observable<TagGroupedColorful> {
     return this._api.all().pipe(
       map((tags) => ({

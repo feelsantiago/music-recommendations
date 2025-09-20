@@ -19,6 +19,7 @@
     "@nestjs/throttler": "^6.4.0",
     "@primeuix/themes": "^1.2.3",
     "@rx-angular/state": "^20.0.0",
+    "@rx-angular/template": "^20.0.0",
     "@sapphire/result": "^2.7.2",
     "@tailwindcss/postcss": "^4.1.12",
     "axios": "^1.6.0",

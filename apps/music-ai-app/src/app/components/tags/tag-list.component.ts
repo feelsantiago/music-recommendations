@@ -2,31 +2,32 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  model,
   output,
   Signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TagButtonComponent } from '@music-ai/components-ui';
+import { Tags } from '../../domain/tags/tags.service';
 import { TagSelected } from '../../domain/tags/tags.types';
-import { RecommendationTagComponent } from './recommendation-tag.component';
+import { TagComponent } from './tag.component';
 
 type MaxTagList = number;
 
 @Component({
-  selector: 'msc-recommendation-tag-list',
+  selector: 'msc-tag-list',
   template: `<div class="flex flex-wrap flex-gap-2 justify-center items-center">
     @for (tag of slice(); track tag.id) {
-      <msc-recommendation-tag [tag]="tag" (tagChange)="onTagChange(tag)" />
+      <msc-tag [tag]="tag" (tagChange)="onTagChange(tag)" />
     }
 
-    @if (tags().length > max) {
+    @if (selected().length > max) {
       <msc-ui-tag-button value="..." [severity]="'danger'" />
     }
 
     <msc-ui-tag-button
       icon="pi pi-plus"
       [severity]="'contrast'"
-      (pressed)="add.emit()"
+      (pressed)="selectTag.emit()"
     />
   </div>`,
   styles: [
@@ -36,25 +37,22 @@ type MaxTagList = number;
       }
     `,
   ],
-  imports: [RecommendationTagComponent, TagButtonComponent],
+  imports: [TagComponent, TagButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecommendationTagListComponent {
+export class TagListComponent {
   public readonly max: MaxTagList = 6;
-  public readonly tags = model<TagSelected[]>([]);
+  public readonly selected: Signal<TagSelected[]>;
   public readonly slice: Signal<TagSelected[]>;
 
-  public add = output();
+  public selectTag = output();
 
-  constructor() {
-    this.slice = computed(() => this.tags().slice(0, this.max));
+  constructor(private readonly _tags: Tags) {
+    this.selected = toSignal(this._tags.selected$, { initialValue: [] });
+    this.slice = computed(() => this.selected().slice(0, this.max));
   }
 
   public onTagChange(tag: TagSelected): void {
-    const selected = this.tags().filter(
-      (selectedTag) => selectedTag.name !== tag.name,
-    );
-
-    this.tags.update(() => selected);
+    this._tags.unselect(tag);
   }
 }
