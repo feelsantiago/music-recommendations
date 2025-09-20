@@ -16,7 +16,7 @@ type MaxTagList = number;
 @Component({
   selector: 'msc-tag-list',
   template: `<div class="flex flex-wrap flex-gap-2 justify-center items-center">
-    @for (tag of slice(); track tag.id) {
+    @for (tag of tags(); track tag.id) {
       <msc-tag [tag]="tag" (tagChange)="onTagChange(tag)" />
     }
 
@@ -43,13 +43,13 @@ type MaxTagList = number;
 export class TagListComponent {
   public readonly max: MaxTagList = 6;
   public readonly selected: Signal<TagSelected[]>;
-  public readonly slice: Signal<TagSelected[]>;
+  public readonly tags: Signal<TagSelected[]>;
 
   public selectTag = output();
 
   constructor(private readonly _tags: Tags) {
     this.selected = toSignal(this._tags.selected$, { initialValue: [] });
-    this.slice = computed(() => this.selected().slice(0, this.max));
+    this.tags = computed(() => this.selected().slice(0, this.max));
   }
 
   public onTagChange(tag: TagSelected): void {
