@@ -9,10 +9,15 @@ import {
 import { BadgeModule } from 'primeng/badge';
 import { DividerModule } from 'primeng/divider';
 import { match } from 'ts-pattern';
-import { SelectedTag, Tag, TagSelected } from '../../domain/tags/tags.types';
+import {
+  TagColorful,
+  TagSelected,
+  TagSelection,
+  TagUnselected,
+} from '../../domain/tags/tags.types';
 import { RecommendationTagComponent } from './recommendation-tag.component';
 
-function unselectTags(tag: Tag[]): SelectedTag[] {
+function unselectTags(tag: TagColorful[]): TagUnselected[] {
   return tag.map((tag) => ({ ...tag, state: 'unselected' }));
 }
 
@@ -52,9 +57,9 @@ export class RecommendationTagSelectComponent {
   public unselected = input([], { transform: unselectTags, alias: 'tags' });
   public removable = input(false);
   public selectedChange = output<TagSelected[]>();
-  public removed = output<Tag>();
+  public removed = output<TagColorful>();
 
-  public tags: Signal<SelectedTag[]>;
+  public tags: Signal<TagSelection[]>;
 
   constructor() {
     this.tags = computed(() => {
@@ -68,7 +73,7 @@ export class RecommendationTagSelectComponent {
     });
   }
 
-  public onTagChange(tag: SelectedTag): void {
+  public onTagChange(tag: TagSelection): void {
     const selected = match(tag)
       .with({ state: 'selected' }, (selected) =>
         this.selected().concat([selected]),
@@ -81,7 +86,7 @@ export class RecommendationTagSelectComponent {
     this.selectedChange.emit(selected);
   }
 
-  public onTagRemoved(tag: SelectedTag): void {
+  public onTagRemoved(tag: TagSelection): void {
     if (tag.state === 'selected') {
       const selected = this.selected().filter((t) => t.id !== tag.id);
       this.selectedChange.emit(selected);

@@ -1,3 +1,5 @@
+import { InjectionToken } from '@angular/core';
+
 export interface Env {
   api: string;
   csrf: {
@@ -5,3 +7,5 @@ export interface Env {
     header: string;
   };
 }
+
+export const APP_CONFIG = new InjectionToken<Env>('Application Config');

@@ -8,15 +8,11 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
+import { Tag, TagType } from '@music-ai/tags';
 import { DrawerModule } from 'primeng/drawer';
 import { match } from 'ts-pattern';
 import { CustomTags } from '../../domain/custom/custom-tags.service';
-import {
-  GroupedTags,
-  Tag,
-  TagSelected,
-  TagType,
-} from '../../domain/tags/tags.types';
+import { TagGroupedColorful, TagSelected } from '../../domain/tags/tags.types';
 import { RecommendationCustomComponent } from './recommendation-custom.component';
 import { RecommendationTagSelectComponent } from './recommendation-tag-select.component';
 
@@ -69,7 +65,7 @@ import { RecommendationTagSelectComponent } from './recommendation-tag-select.co
 })
 export class RecommendationDrawerComponnet {
   public open = model(false);
-  public tags = input.required<GroupedTags>();
+  public tags = input.required<TagGroupedColorful>();
   public selected = input<TagSelected[]>([]);
 
   public selectedChange = output<TagSelected[]>();

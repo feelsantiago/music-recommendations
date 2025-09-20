@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Tag } from '@music-ai/tags';
 import { rxState } from '@rx-angular/state';
 import { rxEffects } from '@rx-angular/state/effects';
 import { AppStorage } from '../../storage/app-storage';
-import { Tag } from '../tags/tags.types';
+import { TagColorful } from '../tags/tags.types';
 
 interface CustomTagsState {
-  tags: Tag[];
+  tags: TagColorful[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,10 +21,12 @@ export class CustomTags {
   public readonly tags$ = this._state.select('tags');
 
   constructor(private readonly _storage: AppStorage) {
-    const tags = this._storage.fetch<Tag[]>(this._key).match<Tag[], Tag[]>({
-      some: (tags) => tags,
-      none: () => [],
-    });
+    const tags = this._storage
+      .fetch<TagColorful[]>(this._key)
+      .match<TagColorful[], TagColorful[]>({
+        some: (tags) => tags,
+        none: () => [],
+      });
 
     this._state.set('tags', () => tags);
 
@@ -32,7 +35,7 @@ export class CustomTags {
     );
   }
 
-  public save(tag: Tag): void {
+  public save(tag: TagColorful): void {
     this._state.set('tags', ({ tags }) => [...tags, tag]);
   }
 

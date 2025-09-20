@@ -17,7 +17,8 @@
     "paths": {
       "@music-ai/common": ["libs/common/src/index.ts"],
       "@music-ai/components-ui": ["libs/components-ui/src/index.ts"],
-      "@music-ai/random": ["libs/random/src/index.ts"]
+      "@music-ai/random": ["libs/random/src/index.ts"],
+      "@music-ai/tags": ["libs/tags/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

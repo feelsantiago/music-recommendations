@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { rxState } from '@rx-angular/state';
-import { combineLatest, map, Observable, of } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 import { CustomTags } from '../custom/custom-tags.service';
-import { TAGS } from './tags.const';
-import { GroupedTags, TagSelected } from './tags.types';
+import { TagsApi } from './tags.api';
+import { TagGroupedColorful, TagSelected } from './tags.types';
 
 interface TagsState {
   selected: TagSelected[];
-  tags: GroupedTags;
+  tags: TagGroupedColorful;
 }
 
 @Injectable({
@@ -21,7 +21,10 @@ export class Tags {
   public tags$ = this._state.select('tags');
   public selected$ = this._state.select('selected');
 
-  constructor(private readonly _custom: CustomTags) {
+  constructor(
+    private readonly _api: TagsApi,
+    private readonly _custom: CustomTags,
+  ) {
     const tags$ = combineLatest([this.fetch(), this._custom.tags$]).pipe(
       map(([tags, custom]) => ({ ...tags, custom })),
     );
@@ -33,12 +36,12 @@ export class Tags {
     this._state.set('selected', () => tags);
   }
 
-  public fetch(): Observable<GroupedTags> {
-    return of(TAGS).pipe(
+  public fetch(): Observable<TagGroupedColorful> {
+    return this._api.all().pipe(
       map((tags) => ({
         genre: tags.genre.map((tag) => ({ ...tag, severity: 'unset' })),
         mood: tags.mood.map((tag) => ({ ...tag, severity: 'unset' })),
-        custom: tags.custom.map((tag) => ({ ...tag, severity: 'unset' })),
+        custom: [],
       })),
     );
   }

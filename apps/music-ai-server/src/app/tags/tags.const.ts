@@ -1,6 +1,6 @@
-import { GroupedTagsDto } from './tags.types';
+import { SystemTags } from '@music-ai/tags';
 
-export const TAGS: GroupedTagsDto = {
+export const TAGS: SystemTags = {
   genre: [
     { id: '1', name: 'Rock', type: 'genre' },
     { id: '2', name: 'Alternative Rock', type: 'genre' },
@@ -87,5 +87,4 @@ export const TAGS: GroupedTagsDto = {
     { id: '19', name: 'Sentimental', type: 'mood' },
     { id: '20', name: 'Mysterious', type: 'mood' },
   ],
-  custom: [],
 };

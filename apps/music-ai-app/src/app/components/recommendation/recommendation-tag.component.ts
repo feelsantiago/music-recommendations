@@ -16,7 +16,7 @@ import {
   TagButtonComponent,
 } from '@music-ai/components-ui';
 import { match } from 'ts-pattern';
-import { SelectedTag } from '../../domain/tags/tags.types';
+import { TagSelection } from '../../domain/tags/tags.types';
 
 @Component({
   selector: 'msc-recommendation-tag',
@@ -34,11 +34,11 @@ import { SelectedTag } from '../../domain/tags/tags.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationTagComponent {
-  public tag = model.required<SelectedTag>();
+  public tag = model.required<TagSelection>();
   public removable = input(false);
   public severity: Signal<Severity>;
   public selected: Signal<boolean>;
-  public removed = output<SelectedTag>();
+  public removed = output<TagSelection>();
 
   constructor(@SkipSelf() private readonly _colorize: SeverityColorize) {
     this.severity = linkedSignal({
@@ -59,7 +59,7 @@ export class RecommendationTagComponent {
   public onClick(): void {
     const severity = this.severity();
     this.tag.update((tag) =>
-      match<SelectedTag['state'], SelectedTag>(tag.state)
+      match<TagSelection['state'], TagSelection>(tag.state)
         .with('selected', () => ({ ...tag, severity, state: 'unselected' }))
         .with('unselected', () => ({ ...tag, severity, state: 'selected' }))
         .exhaustive(),
