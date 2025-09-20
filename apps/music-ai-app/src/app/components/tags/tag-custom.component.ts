@@ -44,7 +44,7 @@ export class TagCustomComponent {
       severity: 'unset',
     };
 
-    this.tag.emit(this._colorize.apply(tag));
     this.value = '';
+    this.tag.emit(this._colorize.apply(tag));
   }
 }

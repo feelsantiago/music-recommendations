@@ -22,8 +22,7 @@ export class RecommendationComponent {
   private readonly _effects = rxEffects();
 
   public readonly slider = viewChild.required(SliderComponent);
-
-  public recommendations = [
+  public readonly recommendations = [
     {
       id: 1,
     },

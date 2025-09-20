@@ -8,6 +8,7 @@ import { Cookie } from './configs/cookie';
 import { Cors } from './configs/cors';
 import { Csrf } from './configs/csrf';
 import { Helmet } from './configs/helmet';
+import { Morgan } from './configs/morgan';
 import { Session } from './configs/session';
 import { Configuration } from './configuration';
 import {
@@ -21,6 +22,7 @@ import {
   imports: [ConfigModule.forRoot()],
   providers: [
     Configuration,
+    Morgan,
     Helmet,
     Cors,
     Session,
@@ -29,14 +31,15 @@ import {
     Config,
     {
       provide: SERVER_CONFIGURATIONS,
-      useFactory: (helmet, cors, session, cookie, csrf) => [
+      useFactory: (morgan, helmet, cors, session, cookie, csrf) => [
+        morgan,
         helmet,
         cors,
         session,
         cookie,
         csrf,
       ],
-      inject: [Helmet, Cors, Session, Cookie, Csrf],
+      inject: [Morgan, Helmet, Cors, Session, Cookie, Csrf],
     },
     {
       provide: REDIS_CONNECTION,
