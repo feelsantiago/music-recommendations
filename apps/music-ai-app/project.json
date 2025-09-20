@@ -36,7 +36,13 @@
               "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "src/environments/environment.ts",
+              "with": "src/environments/environment.prod.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,
@@ -54,7 +60,13 @@
       },
       "configurations": {
         "production": {
-          "buildTarget": "music-ai-app:build:production"
+          "buildTarget": "music-ai-app:build:production",
+          "fileReplacements": [
+            {
+              "replace": "src/environments/environment.ts",
+              "with": "src/environments/environment.prod.ts"
+            }
+          ]
         },
         "development": {
           "buildTarget": "music-ai-app:build:development"

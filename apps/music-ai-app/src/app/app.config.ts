@@ -12,6 +12,8 @@ import {
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
+import { APP_CONFIG } from '../environments/env';
+import { environment } from '../environments/environment';
 import { appRoutes } from './app.routes';
 import { MusicAppTheme } from './app.theme';
 import { CsrfInterceptor } from './interceptors/csrf.interceptor';
@@ -23,9 +25,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(
       withXsrfConfiguration({
-        // cookieName: '__Host-psifi.x-csrf-token',
-        cookieName: 'CSRF_TOKEN',
-        headerName: 'x-csrf-token',
+        cookieName: environment.csrf.cookie,
+        headerName: environment.csrf.header,
       }),
       withInterceptorsFromDi(),
     ),
@@ -35,6 +36,7 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideRouter(appRoutes),
+    { provide: APP_CONFIG, useValue: environment },
     { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },
   ],
 };
