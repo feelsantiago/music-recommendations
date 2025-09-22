@@ -1,4 +1,5 @@
 import { GenerateContentResponse } from '@google/genai';
+import { AppError } from '@music-ai/common';
 import { Option, Result } from '@sapphire/result';
 
 interface TokenCount {
@@ -39,12 +40,14 @@ export class PromptResponse {
     );
   }
 
-  public data<T>(): Result<T, Error> {
+  public data<T>(): Result<T, AppError> {
     return this._text
-      .okOr(new Error('No text in response'))
+      .okOr(AppError.create('[Prompt - Response] - Text is empety'))
       .andThen((text: string) =>
-        Result.from(() => JSON.parse(text)).mapErr(
-          () => new Error('Unable to parse response'),
+        Result.from(() => JSON.parse(text)).mapErr(() =>
+          AppError.create('[Prompt - Response] - Unable to parse data', {
+            metadata: { text },
+          }),
         ),
       )
       .map((data) => data as T);

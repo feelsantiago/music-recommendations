@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ResultAsync } from '@music-ai/common';
+import { AppError, ResultAsync } from '@music-ai/common';
 import {
   Recommendation,
   RecommendationResponse,
@@ -16,17 +16,15 @@ export class Gemini implements Recommendations {
 
   public async generate(
     type: RecommendationType,
-  ): ResultAsync<RecommendationResponse> {
-    const response = await match(type)
+  ): ResultAsync<RecommendationResponse, AppError> {
+    const result = await match(type)
       .with('album', () => this._prompt.album())
       .with('artist', () => this._prompt.artist())
       .with('music', () => this._prompt.music())
       .exhaustive();
 
-    const {
-      id,
-      tokens: { total },
-    } = response;
+    const response = result.unwrap();
+
     return response.data<Recommendation[]>().map((recommendations) => ({
       id,
       recommendations,

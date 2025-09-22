@@ -1,4 +1,4 @@
-import { ResultAsync } from '@music-ai/common';
+import { AppError, ResultAsync } from '@music-ai/common';
 
 export interface Recommendation {
   album: string;
@@ -18,5 +18,5 @@ export type RecommendationType = 'album' | 'artist' | 'music';
 export abstract class Recommendations {
   public abstract generate(
     type: RecommendationType,
-  ): ResultAsync<RecommendationResponse>;
+  ): ResultAsync<RecommendationResponse, AppError>;
 }
