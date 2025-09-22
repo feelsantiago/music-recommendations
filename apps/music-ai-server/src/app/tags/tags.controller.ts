@@ -1,11 +1,11 @@
 import { SystemTags } from '@music-ai/tags';
-import { Controller, Get, HttpCode } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { TAGS } from './tags.const';
 
 @Controller('tags')
 export class TagsController {
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   public all(): SystemTags {
     return TAGS;
   }

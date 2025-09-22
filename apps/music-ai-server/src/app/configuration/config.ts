@@ -57,4 +57,8 @@ export class Config {
       '',
     );
   }
+
+  public aiKey(): string {
+    return Option.from(() => this._config.get<string>('AI_KEY')).unwrapOr('');
+  }
 }

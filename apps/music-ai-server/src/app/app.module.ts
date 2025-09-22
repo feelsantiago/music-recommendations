@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { ConfigurationModule } from './configuration/configuration.module';
+import { ResultInterceptor } from './interceptors/result.interceptor';
+import { RecommendationModule } from './recommendations/recommendation.module';
 import { TagModule } from './tags/tags.module';
 
 @Module({
@@ -19,12 +20,16 @@ import { TagModule } from './tags/tags.module';
     ConfigurationModule,
     AuthModule,
     TagModule,
+    RecommendationModule,
   ],
-  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResultInterceptor,
     },
   ],
 })
