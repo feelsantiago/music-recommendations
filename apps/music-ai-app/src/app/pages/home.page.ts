@@ -7,23 +7,19 @@ import { RecommendationTypeComponent } from '../components/recommendation/recomm
 import { RecommendationComponent } from '../components/recommendation/recommendation.component';
 import { TagDrawerComponnet } from '../components/tags/tag-drawer.component';
 import { TagListComponent } from '../components/tags/tag-list.component';
-import { Recommendation } from '../domain/recommendation/recommendation.service';
 
 @Component({
   selector: 'msc-home',
   template: `
     <div class="max-w-120 mx-auto">
-      <msc-tag-drawer title="Choose..." [(open)]="drawer" />
+      <msc-tag-drawer [(open)]="drawer" />
       <msc-recommendation-type />
       <msc-recommendation />
       <div class="mt-10">
         <msc-tag-list (selectTag)="onOpenDrawer()" />
       </div>
       <div class="mt-10">
-        <msc-recommendation-controls
-          (prev)="onPrev()"
-          (next)="onNext()"
-        ></msc-recommendation-controls>
+        <msc-recommendation-controls />
       </div>
     </div>
   `,
@@ -47,17 +43,7 @@ import { Recommendation } from '../domain/recommendation/recommendation.service'
 export class HomePage {
   public drawer = signal(false);
 
-  constructor(private readonly _recommendation: Recommendation) {}
-
   public onOpenDrawer(): void {
     this.drawer.update(() => true);
-  }
-
-  public onNext(): void {
-    this._recommendation.next();
-  }
-
-  public onPrev(): void {
-    this._recommendation.prev();
   }
 }

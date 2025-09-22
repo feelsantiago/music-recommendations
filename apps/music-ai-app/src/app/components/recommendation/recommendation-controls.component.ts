@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { Toolbar } from 'primeng/toolbar';
+import { Recommendation } from '../../domain/recommendation/recommendation.service';
 
 @Component({
   selector: 'msc-recommendation-controls',
@@ -9,7 +10,7 @@ import { Toolbar } from 'primeng/toolbar';
       <p-button
         severity="secondary"
         icon="pi pi-step-backward"
-        (onClick)="prev.emit()"
+        (onClick)="onPrev()"
       ></p-button>
     </ng-template>
     <ng-template #center>
@@ -21,7 +22,7 @@ import { Toolbar } from 'primeng/toolbar';
       <p-button
         severity="secondary"
         icon="pi pi-step-forward"
-        (onClick)="next.emit()"
+        (onClick)="onNext()"
       ></p-button>
     </ng-template>
   </p-toolbar>`,
@@ -29,6 +30,13 @@ import { Toolbar } from 'primeng/toolbar';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommnedationControlsComponent {
-  public next = output();
-  public prev = output();
+  constructor(private readonly _recommendation: Recommendation) {}
+
+  public onNext(): void {
+    this._recommendation.next();
+  }
+
+  public onPrev(): void {
+    this._recommendation.prev();
+  }
 }
