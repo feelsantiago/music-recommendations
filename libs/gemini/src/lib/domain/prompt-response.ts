@@ -1,6 +1,6 @@
 import { GenerateContentResponse } from '@google/genai';
-import { AppError } from '@music-ai/common';
-import { Option, Result } from '@sapphire/result';
+import { Option, Result } from '@music-ai/common';
+import { GeminiError } from '../gemini.errors';
 
 interface TokenCount {
   prompt: number;
@@ -40,14 +40,12 @@ export class PromptResponse {
     );
   }
 
-  public data<T>(): Result<T, AppError> {
+  public data<T>(): Result<T, GeminiError> {
     return this._text
-      .okOr(AppError.create('[Prompt - Response] - Text is empety'))
+      .okOr(GeminiError.empty())
       .andThen((text: string) =>
         Result.from(() => JSON.parse(text)).mapErr(() =>
-          AppError.create('[Prompt - Response] - Unable to parse data', {
-            metadata: { text },
-          }),
+          GeminiError.parse({ metadata: { text } }),
         ),
       )
       .map((data) => data as T);

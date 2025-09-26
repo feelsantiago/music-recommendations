@@ -1,7 +1,8 @@
 import { Option } from '@sapphire/result';
 import { match, P } from 'ts-pattern';
 
-interface AppErrorOptions {
+export interface AppErrorOptions {
+  name?: string;
   source?: Error;
   metadata?: Record<string, unknown>;
 }
@@ -12,8 +13,10 @@ export class AppError extends Error {
 
   public constructor(message: string, options: AppErrorOptions = {}) {
     super(message);
+
     this.source = Option.from(options.source);
     this.metadata = options.metadata ?? {};
+    this.name = options.name ?? this.constructor.name;
   }
 
   public static create(
@@ -27,7 +30,7 @@ export class AppError extends Error {
     message: string,
     metadata: Record<string, unknown> = {},
   ): AppError {
-    return new AppError(message, { source: this, metadata });
+    return new AppError(message, { source: this, metadata, name: this.name });
   }
 
   public log(): string {

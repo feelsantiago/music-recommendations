@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
-
-import { AppError, ResultAsync } from '@music-ai/common';
+import { ResultAsync, safeTry } from '@music-ai/common';
 import {
   Recommendation,
+  RecommendationError,
   RecommendationResponse,
   Recommendations,
   RecommendationType,
 } from '@music-ai/recommendations';
-import { match } from 'ts-pattern';
+import { Injectable } from '@nestjs/common';
+import { match, P } from 'ts-pattern';
 import { RecommendationPrompt } from './domain/recommendation-prompt';
+import { GeminiError } from './gemini.errors';
 
 @Injectable()
 export class Gemini implements Recommendations {
@@ -16,19 +17,29 @@ export class Gemini implements Recommendations {
 
   public async generate(
     type: RecommendationType,
-  ): ResultAsync<RecommendationResponse, AppError> {
+  ): ResultAsync<RecommendationResponse, RecommendationError> {
     const result = await match(type)
       .with('album', () => this._prompt.album())
       .with('artist', () => this._prompt.artist())
       .with('music', () => this._prompt.music())
       .exhaustive();
 
-    const response = result.unwrap();
+    return safeTry(function* ({ $ }) {
+      const response = yield* $(result);
+      return response.data<Recommendation[]>().map((recommendations) => ({
+        id: response.id,
+        recommendations,
+        metadata: { tokens: response.tokens.total },
+      }));
+    }).mapErr((error) => this._error(error));
+  }
 
-    return response.data<Recommendation[]>().map((recommendations) => ({
-      id,
-      recommendations,
-      metadata: { tokens: total },
-    }));
+  private _error(error: GeminiError): RecommendationError {
+    return match(error.type)
+      .with('prompt_generation', () => RecommendationError.generate(error))
+      .with(P.union('empty_prompt', 'parse_prompt_response'), () =>
+        RecommendationError.invalid(error),
+      )
+      .exhaustive();
   }
 }

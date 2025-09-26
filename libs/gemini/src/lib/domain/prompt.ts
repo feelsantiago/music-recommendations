@@ -5,7 +5,7 @@ export type PromptType = 'album' | 'artist' | 'music';
 export class Prompt {
   public static readonly schema = PROMPT_SCHEMA;
 
-  constructor(private readonly _type: PromptType) {}
+  constructor(public readonly type: PromptType) {}
 
   public static album(): Prompt {
     return new Prompt('album');
@@ -20,6 +20,6 @@ export class Prompt {
   }
 
   public text(tags: string): string {
-    return `Recommend to me 5 ${this._type} that are ${tags}`;
+    return `Recommend to me 5 ${this.type} that are ${tags}`;
   }
 }
