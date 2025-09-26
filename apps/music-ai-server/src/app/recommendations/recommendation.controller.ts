@@ -1,5 +1,9 @@
-import { ResultAsync, safeTry, SafeTryUnwraper } from '@music-ai/common';
-import { Recommendation, Recommendations } from '@music-ai/recommendations';
+import { ok, ResultAsync, safeTryBind } from '@music-ai/common';
+import {
+  Recommendation,
+  RecommendationError,
+  Recommendations,
+} from '@music-ai/recommendations';
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 
 @Controller('recommendations')
@@ -8,15 +12,10 @@ export class RecommendationController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  public async generate(): ResultAsync<Recommendation[]> {
-    return safeTry(
-      async function* (
-        this: RecommendationController,
-        { $async }: SafeTryUnwraper,
-      ) {
-        const result = yield* $async(this._recommendations.generate('album'));
-        return result.recommendations;
-      }.bind(this),
-    );
+  public async generate(): ResultAsync<Recommendation[], RecommendationError> {
+    return safeTryBind(this, async function* ({ $async }) {
+      const result = yield* $async(this._recommendations.generate('album'));
+      return ok(result.recommendations);
+    });
   }
 }
