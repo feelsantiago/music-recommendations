@@ -41,3 +41,9 @@ export class RecommendationError extends AppError {
     );
   }
 }
+
+export function isRecommendationError(
+  error: unknown,
+): error is RecommendationError {
+  return error instanceof RecommendationError;
+}

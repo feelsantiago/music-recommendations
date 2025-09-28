@@ -4,8 +4,16 @@ import {
   RecommendationError,
   Recommendations,
 } from '@music-ai/recommendations';
-import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
+} from '@nestjs/common';
+import { RecommendationInterceptor } from './recommendation.interceptor';
 
+@UseInterceptors(RecommendationInterceptor)
 @Controller('recommendations')
 export class RecommendationController {
   constructor(private readonly _recommendations: Recommendations) {}
