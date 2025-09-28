@@ -2,16 +2,14 @@ import { INestApplication, Inject, Injectable } from '@nestjs/common';
 import { RedisStore } from 'connect-redis';
 import session, { CookieOptions } from 'express-session';
 import { RedisClientType } from 'redis';
-import { Config } from '../config';
-import {
-  COOKIE_SETTINGS,
-  REDIS_CONNECTION,
-  ServerConfiguration,
-  SessionConfig,
-} from '../types';
+import { Config } from '../../configuration/config';
+import { REDIS_CONNECTION } from '../../configuration/configuration.providers';
+import { SessionConfig } from '../../configuration/configuration.types';
+import { COOKIE_SETTINGS } from '../middlewares.providers';
+import { GlobalMiddleware } from '../middlewares.types';
 
 @Injectable()
-export class Session implements ServerConfiguration {
+export class SessionMiddleware implements GlobalMiddleware {
   private readonly _session: SessionConfig;
   private readonly _store: RedisStore;
 
@@ -27,7 +25,7 @@ export class Session implements ServerConfiguration {
     });
   }
 
-  public setup(app: INestApplication): void {
+  public apply(app: INestApplication): void {
     app.use(
       session({
         store: this._store,

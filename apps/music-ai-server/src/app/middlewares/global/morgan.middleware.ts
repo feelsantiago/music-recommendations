@@ -1,12 +1,12 @@
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import morgan from 'morgan';
-import { ServerConfiguration } from '../types';
+import { GlobalMiddleware } from '../middlewares.types';
 
 @Injectable()
-export class Morgan implements ServerConfiguration {
-  private readonly _logger = new Logger(Morgan.name);
+export class MorganMiddleware implements GlobalMiddleware {
+  private readonly _logger = new Logger(MorganMiddleware.name);
 
-  public setup(app: INestApplication): void {
+  public apply(app: INestApplication): void {
     app.use(
       morgan('dev', {
         stream: { write: (message) => this._logger.log(message) },

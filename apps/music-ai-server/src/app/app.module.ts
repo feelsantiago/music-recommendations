@@ -4,6 +4,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { ConfigurationModule } from './configuration/configuration.module';
 import { ResultInterceptor } from './interceptors/result.interceptor';
+import { MidlewaresModule } from './middlewares/middlewares.module';
 import { RecommendationModule } from './recommendations/recommendation.module';
 import { TagModule } from './tags/tags.module';
 
@@ -18,6 +19,7 @@ import { TagModule } from './tags/tags.module';
       ],
     }),
     ConfigurationModule,
+    MidlewaresModule,
     AuthModule,
     TagModule,
     RecommendationModule,

@@ -7,11 +7,12 @@ import {
   DoubleCsrfProtection,
 } from 'csrf-csrf';
 import { Request, Response } from 'express';
-import { Config } from '../config';
-import { COOKIE_SETTINGS, ServerConfiguration } from '../types';
+import { Config } from '../../configuration/config';
+import { COOKIE_SETTINGS } from '../middlewares.providers';
+import { GlobalMiddleware } from '../middlewares.types';
 
 @Injectable()
-export class Csrf implements ServerConfiguration {
+export class CsrfMiddleware implements GlobalMiddleware {
   public middleware!: DoubleCsrfProtection;
 
   private _generator!: CsrfTokenGenerator;
@@ -22,7 +23,7 @@ export class Csrf implements ServerConfiguration {
     @Inject(COOKIE_SETTINGS) private readonly _cookie: CsrfTokenCookieOptions,
   ) {}
 
-  public setup(app: INestApplication): void {
+  public apply(app: INestApplication): void {
     const csrf = this._config.csrf();
 
     const { generateCsrfToken, doubleCsrfProtection, validateRequest } =

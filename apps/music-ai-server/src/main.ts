@@ -2,13 +2,13 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { Config } from './app/configuration/config';
-import { Configuration } from './app/configuration/configuration';
+import { Middlewares } from './app/middlewares/middlewares.service';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
-  const configuration = app.get(Configuration);
-  configuration.setup(app);
+  const middlewares = app.get(Middlewares);
+  middlewares.apply(app);
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);

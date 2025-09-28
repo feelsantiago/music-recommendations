@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Option } from '@sapphire/result';
 import { match } from 'ts-pattern';
-import { CsrfConfig, Environment, SessionConfig } from './types';
+import { CsrfConfig, Environment, SessionConfig } from './configuration.types';
 
 @Injectable()
 export class Config {

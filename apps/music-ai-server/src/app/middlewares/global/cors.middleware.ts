@@ -1,10 +1,10 @@
 import { INestApplication, Injectable } from '@nestjs/common';
 import { match } from 'ts-pattern';
-import { Config } from '../config';
-import { ServerConfiguration } from '../types';
+import { Config } from '../../configuration/config';
+import { GlobalMiddleware } from '../middlewares.types';
 
 @Injectable()
-export class Cors implements ServerConfiguration {
+export class CorsMiddleware implements GlobalMiddleware {
   private readonly _origin: string | string[];
 
   constructor(private readonly _config: Config) {
@@ -16,7 +16,7 @@ export class Cors implements ServerConfiguration {
       .otherwise(() => [this._config.appUrl()]);
   }
 
-  public setup(app: INestApplication): void {
+  public apply(app: INestApplication): void {
     app.enableCors({
       origin: this._origin,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
