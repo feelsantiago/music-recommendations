@@ -11,9 +11,9 @@ import {
   HttpStatus,
   UseInterceptors,
 } from '@nestjs/common';
-import { RecommendationInterceptor } from './recommendation.interceptor';
+import { RecommendationErrorInterceptor } from './recommendation-error.interceptor';
 
-@UseInterceptors(RecommendationInterceptor)
+@UseInterceptors(RecommendationErrorInterceptor)
 @Controller('recommendations')
 export class RecommendationController {
   constructor(private readonly _recommendations: Recommendations) {}

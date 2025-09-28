@@ -4,7 +4,7 @@ import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { match } from 'ts-pattern';
 
 @Injectable()
-export class RecommendationInterceptor extends AppErrorInterceptor<RecommendationError> {
+export class RecommendationErrorInterceptor extends AppErrorInterceptor<RecommendationError> {
   public transform(error: RecommendationError): HttpException {
     return match(error.type)
       .with(
