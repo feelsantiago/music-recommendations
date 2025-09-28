@@ -48,4 +48,17 @@ export class AppError extends Error {
       this.metadata,
     )}`;
   }
+
+  public sourceStack(): string {
+    return this.source.match({
+      some: (error) => {
+        if (error instanceof AppError) {
+          return (error as AppError).sourceStack();
+        }
+
+        return error.stack ?? '';
+      },
+      none: () => this.stack ?? '',
+    });
+  }
 }
