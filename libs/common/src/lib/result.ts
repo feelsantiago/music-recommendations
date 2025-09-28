@@ -1,9 +1,29 @@
 import { Err, Result, ResultError } from '@sapphire/result';
+import { typeSafeBind } from './type-safe-bind';
 export * from '@sapphire/result';
 
 export type ResultAsync<T, E = unknown> = Promise<Result<T, E>>;
-export type ResultGenerator<T, E = unknown> = Generator<Result<T, E>, void>;
-export type ResultAsyncGenerator<T, E = unknown> = AsyncGenerator<Err<E, T>, T>;
+export type ResultGenerator<T, E = unknown> = Generator<Err<E>, Result<T, E>>;
+export type ResultAsyncGenerator<T, E = unknown> = AsyncGenerator<
+  Err<E>,
+  Result<T, E>
+>;
+
+export type ResultGeneratorFunc<T, E> = (
+  $: SafeTryUnwraper,
+) => ResultGenerator<T, E>;
+export type ResultGeneratorFuncWithThis<ThisArg, T, E> = (
+  this: ThisArg,
+  ...args: [...Parameters<ResultGeneratorFunc<T, E>>]
+) => ReturnType<ResultGeneratorFunc<T, E>>;
+
+export type ResultAsyncGeneratorFunc<T, E> = (
+  $: SafeTryUnwraper,
+) => ResultAsyncGenerator<T, E>;
+export type ResultAsyncGeneratorFuncWithThis<ThisArg, T, E> = (
+  this: ThisArg,
+  ...args: [...Parameters<ResultAsyncGeneratorFunc<T, E>>]
+) => ReturnType<ResultAsyncGeneratorFunc<T, E>>;
 
 export interface SafeTryUnwraper {
   $: <T, E>(result: Result<T, E>) => Generator<Err<E, T>, T>;
@@ -26,35 +46,14 @@ async function* unwrapAsync<T, E>(
   return yield* unwrap(_result);
 }
 
-/**
- * Binds a function to a specific 'this' context, returning a new function.
- * This function is a type-safe equivalent of the standard JavaScript Function.prototype.bind.
- *
- * @template T A generic representing the function to be bound.
- * @template ThisArg The type of the 'this' argument.
- * @param {T} fn The function to be bound.
- * @param {ThisArg} thisArg The value to be passed as the 'this' parameter to the target function when the bound function is called.
- * @returns {OmitThisParameter<T>} A new function with the 'this' context fixed to thisArg.
- */
-function typeSafeBind<T extends (this: any, ...args: any[]) => any, ThisArg>(
-  fn: T,
-  thisArg: ThisArg,
-): OmitThisParameter<T> {
-  // We use the standard JavaScript bind implementation at runtime.
-  // The TypeScript utility types handle the compile-time type safety.
-  return fn.bind(thisArg) as OmitThisParameter<T>;
-}
-
+export function safeTry<T, E>(body: ResultGeneratorFunc<T, E>): Result<T, E>;
 export function safeTry<T, E>(
-  body: ($: SafeTryUnwraper) => Generator<Err<E>, Result<T, E>>,
-): Result<T, E>;
-export function safeTry<T, E>(
-  body: ($: SafeTryUnwraper) => AsyncGenerator<Err<E>, Result<T, E>>,
+  body: ResultAsyncGeneratorFunc<T, E>,
 ): Promise<Result<T, E>>;
 export function safeTry<T, E>(
   body:
-    | (($: SafeTryUnwraper) => Generator<Err<E>, Result<T, E>>)
-    | (($: SafeTryUnwraper) => AsyncGenerator<Err<E>, Result<T, E>>),
+    | (($: SafeTryUnwraper) => ResultGenerator<T, E>)
+    | (($: SafeTryUnwraper) => ResultAsyncGenerator<T, E>),
 ): Result<T, E> | Promise<Result<T, E>> {
   const n = body({ $: unwrap, $async: unwrapAsync }).next();
 
@@ -67,26 +66,18 @@ export function safeTry<T, E>(
 
 export function safeTryBind<ThisArg, T, E>(
   thisArg: ThisArg,
-  body: (
-    this: ThisArg,
-    $: SafeTryUnwraper,
-  ) => AsyncGenerator<Err<E>, Result<T, E>>,
-): Promise<Result<T, E>>;
-export function safeTryBind<ThisArg, T, E>(
-  thisArg: ThisArg,
-  body: (
-    this: ThisArg,
-    $: SafeTryUnwraper,
-  ) => AsyncGenerator<Err<E>, Result<T, E>>,
+  body: ResultGeneratorFuncWithThis<ThisArg, T, E>,
 ): Result<T, E>;
 export function safeTryBind<ThisArg, T, E>(
   thisArg: ThisArg,
+  body: ResultAsyncGeneratorFuncWithThis<ThisArg, T, E>,
+): Promise<Result<T, E>>;
+export function safeTryBind<ThisArg, T, E>(
+  thisArg: ThisArg,
   body:
-    | ((this: ThisArg, $: SafeTryUnwraper) => Generator<Err<E>, Result<T, E>>)
-    | ((
-        this: ThisArg,
-        $: SafeTryUnwraper,
-      ) => AsyncGenerator<Err<E>, Result<T, E>>),
+    | ResultGeneratorFuncWithThis<ThisArg, T, E>
+    | ResultAsyncGeneratorFuncWithThis<ThisArg, T, E>,
 ): Result<T, E> | Promise<Result<T, E>> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return safeTry(typeSafeBind(body, thisArg) as any);
 }
