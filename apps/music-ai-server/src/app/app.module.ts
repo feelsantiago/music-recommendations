@@ -8,6 +8,7 @@ import { ResultInterceptor } from './interceptors/result.interceptor';
 import { MidlewaresModule } from './middlewares/middlewares.module';
 import { RecommendationModule } from './recommendations/recommendation.module';
 import { TagModule } from './tags/tags.module';
+import { TimeModule } from './time/time.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TagModule } from './tags/tags.module';
     AuthModule,
     TagModule,
     RecommendationModule,
+    TimeModule,
   ],
   providers: [
     {

@@ -4,9 +4,9 @@ import { AuthController } from './auth.controller';
 import { RegenerateSessionInterceptor } from './interceptors/regenerate-session.interceptor';
 
 @Module({
-  controllers: [AuthController],
-  providers: [RegenerateSessionInterceptor],
   imports: [ConfigurationModule],
+  providers: [RegenerateSessionInterceptor],
+  controllers: [AuthController],
   exports: [],
 })
 export class AuthModule {}

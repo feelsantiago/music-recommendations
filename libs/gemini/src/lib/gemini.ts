@@ -4,6 +4,7 @@ import {
   RecommendationError,
   RecommendationResponse,
   Recommendations,
+  RecommendationsLimits,
   RecommendationType,
 } from '@music-ai/recommendations';
 import { Injectable } from '@nestjs/common';
@@ -32,6 +33,18 @@ export class Gemini implements Recommendations {
         metadata: { tokens: response.tokens.total },
       }));
     }).mapErr((error) => this._error(error));
+  }
+
+  public limits(): RecommendationsLimits {
+    return {
+      tokens: {
+        minute: 250000,
+      },
+      requests: {
+        day: 1000,
+        minute: 15,
+      },
+    };
   }
 
   private _error(error: GeminiError): RecommendationError {

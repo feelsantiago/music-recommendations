@@ -12,7 +12,7 @@ export class CatchEverythingFilter extends BaseExceptionFilter {
     super();
   }
 
-  public catch(exception: unknown, host: ArgumentsHost): void {
+  public override catch(exception: unknown, host: ArgumentsHost): void {
     super.catch(exception, host);
     this._log(exception);
   }
