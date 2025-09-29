@@ -1,4 +1,4 @@
-import { ok, Result, safeTry, safeTryBind } from '@music-ai/common';
+import { AppError, ok, Result, safeTry, safeTryBind } from '@music-ai/common';
 import { Injectable } from '@nestjs/common';
 import { TimeTrackerValue } from './domain/time-tracker';
 import { TimePassed, TimePassedData, TimeTrackData } from './time.types';
@@ -11,7 +11,7 @@ export class ApplicationTime {
     this._last = this._track().expect('error');
   }
 
-  public hasPassed(): Result<TimePassedData, Error> {
+  public hasPassed(): Result<TimePassedData, AppError> {
     return safeTryBind(this, function* ({ $ }) {
       const now = yield* $(this._track());
       const track = {
@@ -41,7 +41,7 @@ export class ApplicationTime {
     return day.compare(this._last.day) ? 'same_time' : 'different_time';
   }
 
-  private _track(): Result<TimeTrackData, Error> {
+  private _track(): Result<TimeTrackData, AppError> {
     return safeTry(function* ({ $ }) {
       const now = new Date();
 
