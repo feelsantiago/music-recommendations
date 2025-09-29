@@ -1,4 +1,4 @@
-import { Result } from '@sapphire/result';
+import { err, ok, Result } from '@sapphire/result';
 import { AppError } from './app-error';
 
 export class LimitedValue {
@@ -18,6 +18,8 @@ export class LimitedValue {
         }),
       );
     }
+
+    return ok(new LimitedValue(value, limit));
   }
 
   public static zero(limit: number): LimitedValue {
