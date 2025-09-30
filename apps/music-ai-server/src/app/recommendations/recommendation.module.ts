@@ -3,8 +3,7 @@ import { Recommendations } from '@music-ai/recommendations';
 import { Module } from '@nestjs/common';
 import { Config } from '../configuration/config';
 import { ConfigurationModule } from '../configuration/configuration.module';
-import { TimeModule } from '../time/time.module';
-import { RecommendationLimits } from './recommendation-limits';
+import { RecommendationRateLimits } from './rate-limits/recommendations-rate-limits';
 import { RecommendationController } from './recommendation.controller';
 
 @Module({
@@ -16,7 +15,6 @@ import { RecommendationController } from './recommendation.controller';
         apiKey: config.aiKey(),
       }),
     }),
-    TimeModule,
   ],
   controllers: [RecommendationController],
   providers: [
@@ -24,7 +22,7 @@ import { RecommendationController } from './recommendation.controller';
       provide: Recommendations,
       useClass: Gemini,
     },
-    RecommendationLimits,
+    RecommendationRateLimits,
   ],
 })
 export class RecommendationModule {}

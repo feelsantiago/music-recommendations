@@ -42,7 +42,7 @@ export class LimitedValue {
     return this.value >= this.limit;
   }
 
-  public imcomplete(): boolean {
+  public incomplete(): boolean {
     return this.value < this.limit;
   }
 
