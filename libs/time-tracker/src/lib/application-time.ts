@@ -1,7 +1,11 @@
 import { AppError, ok, Result, safeTry, safeTryBind } from '@music-ai/common';
 import { Injectable } from '@nestjs/common';
-import { TimeTrackerValue } from './domain/time-tracker';
-import { TimePassed, TimePassedData, TimeTrackData } from './time.types';
+import { TimeTrackerValue } from './time-tracker-value';
+import {
+  TimePassed,
+  TimePassedData,
+  TimeTrackData,
+} from './time-tracker.types';
 
 @Injectable()
 export class ApplicationTime {

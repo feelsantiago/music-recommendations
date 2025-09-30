@@ -1,11 +1,14 @@
-import { LimitedValue } from '@music-ai/common';
-import { TimePassed } from '@music-ai/time-tracker';
+import { LimitedValue } from './limited-value';
 
 export class RateLimit {
   private constructor(private _value: LimitedValue) {}
 
   public static create(limit: number): RateLimit {
     return new RateLimit(LimitedValue.zero(limit));
+  }
+
+  public static test(): RateLimit {
+    return new RateLimit(LimitedValue.create(10, 10).unwrap());
   }
 
   public increment(): void {
@@ -16,10 +19,8 @@ export class RateLimit {
     this._value = this._value.safeIncrement(value);
   }
 
-  public update(time: TimePassed): void {
-    if (time === 'different_time') {
-      this._value = this._value.reset();
-    }
+  public reset(): void {
+    this._value = this._value.reset();
   }
 
   public available(): boolean {

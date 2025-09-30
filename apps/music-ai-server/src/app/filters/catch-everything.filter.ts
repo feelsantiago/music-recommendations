@@ -24,14 +24,14 @@ export class CatchEverythingFilter extends BaseExceptionFilter {
           `[HTTP Exception] - ${exception.getStatus()} - ${exception.message}`,
         );
 
-        if (this._config.env() === 'development') {
-          this._debud(exception.cause);
+        if (this._config.env() === 'development' && exception.cause) {
+          this._debug(exception.cause);
         }
       })
       .otherwise(() => this._logger.error(error));
   }
 
-  private _debud(error: unknown): void {
+  private _debug(error: unknown): void {
     match(error)
       .with(P.instanceOf(AppError), (appError) => {
         this._logger.debug(`\n${appError.log()}\n`);

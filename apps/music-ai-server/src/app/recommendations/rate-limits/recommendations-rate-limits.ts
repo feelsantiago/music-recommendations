@@ -1,4 +1,4 @@
-import { AppError, ok, Result, safeTryBind } from '@music-ai/common';
+import { AppError, ok, RateLimit, Result, safeTryBind } from '@music-ai/common';
 import {
   RecommendationResponse,
   Recommendations,
@@ -6,7 +6,6 @@ import {
 import { ApplicationTime, TimePassed } from '@music-ai/time-tracker';
 import { Injectable } from '@nestjs/common';
 import { match } from 'ts-pattern';
-import { RateLimit } from './rate-limit';
 import { RecommondationRateLimitsState } from './recommendations-rate-limits.types';
 
 @Injectable()
@@ -24,7 +23,8 @@ export class RecommendationRateLimits {
     private readonly _recommendations: Recommendations,
   ) {
     const { tokens, requests } = this._recommendations.limits();
-    this._tokens = RateLimit.create(tokens.minute);
+    // this._tokens = RateLimit.create(tokens.minute);
+    this._tokens = RateLimit.test();
     this._requests = {
       minute: RateLimit.create(requests.minute),
       day: RateLimit.create(requests.day),
@@ -57,15 +57,15 @@ export class RecommendationRateLimits {
     this._requests.minute.increment();
     this._requests.day.increment();
 
-    if (this._tokens.available()) {
+    if (!this._tokens.available()) {
       this._state = 'tokens_per_minutes_exceeded';
     }
 
-    if (this._requests.minute.available()) {
+    if (!this._requests.minute.available()) {
       this._state = 'requests_per_minutes_exceeded';
     }
 
-    if (this._requests.day.available()) {
+    if (!this._requests.day.available()) {
       this._state = 'requests_per_day_exceeded';
     }
   }
@@ -74,7 +74,10 @@ export class RecommendationRateLimits {
     time: TimePassed,
     rate: RateLimit,
   ): RecommondationRateLimitsState {
-    rate.update(time);
+    if (time === 'different_time') {
+      rate.reset();
+    }
+
     return rate.available() ? 'available' : this._state;
   }
 }
