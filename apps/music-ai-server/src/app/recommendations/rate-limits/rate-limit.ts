@@ -1,5 +1,5 @@
 import { LimitedValue } from '@music-ai/common';
-import { TimePassed } from '../../time/time.types';
+import { TimePassed } from '@music-ai/time-tracker';
 
 export class RateLimit {
   private constructor(private _value: LimitedValue) {}

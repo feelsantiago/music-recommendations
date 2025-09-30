@@ -1,12 +1,12 @@
-import { AppError, ok, RateLimit, Result, safeTryBind } from '@music-ai/common';
+import { AppError, ok, Result, safeTryBind } from '@music-ai/common';
 import {
   RecommendationResponse,
   Recommendations,
 } from '@music-ai/recommendations';
+import { ApplicationTime, TimePassed } from '@music-ai/time-tracker';
 import { Injectable } from '@nestjs/common';
 import { match } from 'ts-pattern';
-import { ApplicationTime } from '../../time/application-time';
-import { TimePassed } from '../../time/time.types';
+import { RateLimit } from './rate-limit';
 import { RecommondationRateLimitsState } from './recommendations-rate-limits.types';
 
 @Injectable()
