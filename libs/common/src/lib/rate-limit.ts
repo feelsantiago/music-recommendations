@@ -7,10 +7,6 @@ export class RateLimit {
     return new RateLimit(LimitedValue.zero(limit));
   }
 
-  public static test(): RateLimit {
-    return new RateLimit(LimitedValue.create(10, 10).unwrap());
-  }
-
   public increment(): void {
     this._value = this._value.safeIncrement(1);
   }
