@@ -20,7 +20,8 @@
       "@music-ai/gemini": ["libs/gemini/src/index.ts"],
       "@music-ai/random": ["libs/random/src/index.ts"],
       "@music-ai/recommendations": ["libs/recommendations/src/index.ts"],
-      "@music-ai/tags": ["libs/tags/src/index.ts"]
+      "@music-ai/tags": ["libs/tags/src/index.ts"],
+      "@music-ai/time-tracker": ["libs/time-tracker/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

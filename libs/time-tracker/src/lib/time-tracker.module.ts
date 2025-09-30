@@ -6,4 +6,4 @@ import { ApplicationTime } from './application-time';
   providers: [ApplicationTime],
   exports: [ApplicationTime],
 })
-export class TimeModule {}
+export class TimeTrackerModule {}

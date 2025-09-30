@@ -1,3 +1,4 @@
+import { TimeTrackerModule } from '@music-ai/time-tracker';
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -8,7 +9,6 @@ import { ResultInterceptor } from './interceptors/result.interceptor';
 import { MidlewaresModule } from './middlewares/middlewares.module';
 import { RecommendationModule } from './recommendations/recommendation.module';
 import { TagModule } from './tags/tags.module';
-import { TimeModule } from './time/time.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { TimeModule } from './time/time.module';
     }),
     ConfigurationModule,
     MidlewaresModule,
-    TimeModule,
+    TimeTrackerModule,
     AuthModule,
     TagModule,
     RecommendationModule,

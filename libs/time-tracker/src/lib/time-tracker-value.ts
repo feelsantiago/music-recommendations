@@ -1,5 +1,5 @@
 import { AppError, err, ok, Result } from '@music-ai/common';
-import { TimeTracker } from '../time.types';
+import { TimeTracker } from './time-tracker.types';
 
 export class TimeTrackerValue implements TimeTracker {
   private constructor(private readonly _value: number) {}
