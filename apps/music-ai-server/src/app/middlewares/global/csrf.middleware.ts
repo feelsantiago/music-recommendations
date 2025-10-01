@@ -38,7 +38,7 @@ export class CsrfMiddleware implements GlobalMiddleware {
     this._validate = validateRequest;
     this.middleware = doubleCsrfProtection;
 
-    // app.use(doubleCsrfProtection);
+    app.use(doubleCsrfProtection);
   }
 
   public token(req: Request, res: Response): string {
