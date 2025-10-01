@@ -55,14 +55,14 @@ export class PromptRecommendation {
   public async artist(
     tags: RecommendationTag[],
   ): ResultAsync<PromptResponse, GeminiError> {
-    const prompt = Prompt.artist();
+    const prompt = Prompt.artist(this._options.recommendationLength);
     return this._generate(prompt, tags);
   }
 
   public async song(
     tags: RecommendationTag[],
   ): ResultAsync<PromptResponse, GeminiError> {
-    const prompt = Prompt.song();
+    const prompt = Prompt.song(this._options.recommendationLength);
     return this._generate(prompt, tags);
   }
 
