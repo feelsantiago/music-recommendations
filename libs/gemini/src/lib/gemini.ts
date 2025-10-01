@@ -24,7 +24,7 @@ export class Gemini implements Recommendations {
     const result = await match(type)
       .with('album', () => this._prompt.album(tags))
       .with('artist', () => this._prompt.artist(tags))
-      .with('music', () => this._prompt.music(tags))
+      .with('song', () => this._prompt.song(tags))
       .exhaustive();
 
     return safeTry(function* ({ $ }) {

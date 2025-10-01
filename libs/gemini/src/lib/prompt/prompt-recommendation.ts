@@ -2,15 +2,27 @@ import {
   GenerateContentConfig,
   GenerateContentResponse,
   GoogleGenAI,
+  Type,
 } from '@google/genai';
 import { ResultAsync, safeTryBind } from '@music-ai/common';
-import { RecommendationTag } from '@music-ai/recommendations';
+import { Prompt, RecommendationTag } from '@music-ai/recommendations';
 import { Inject, Injectable } from '@nestjs/common';
 import { Result } from '@sapphire/result';
 import { GeminiError } from '../gemini.errors';
 import { MODEL } from '../gemini.module-definition';
-import { Prompt } from './prompt';
 import { PromptResponse } from './prompt-response';
+
+export const PROMPT_SCHEMA = {
+  type: Type.ARRAY,
+  items: {
+    type: Type.OBJECT,
+    properties: {
+      album: { type: Type.STRING },
+      artist: { type: Type.STRING },
+    },
+    propertyOrdering: ['album', 'artist'],
+  },
+};
 
 @Injectable()
 export class PromptRecommendation {
@@ -19,7 +31,7 @@ export class PromptRecommendation {
   private get _config(): GenerateContentConfig {
     return {
       responseMimeType: 'application/json',
-      responseSchema: Prompt.schema,
+      responseSchema: PROMPT_SCHEMA,
     };
   }
 
@@ -39,10 +51,10 @@ export class PromptRecommendation {
     return this._generate(prompt, tags);
   }
 
-  public async music(
+  public async song(
     tags: RecommendationTag[],
   ): ResultAsync<PromptResponse, GeminiError> {
-    const prompt = Prompt.music();
+    const prompt = Prompt.song();
     return this._generate(prompt, tags);
   }
 

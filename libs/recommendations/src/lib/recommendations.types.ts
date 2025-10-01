@@ -21,7 +21,7 @@ export interface RecommendationsLimits {
   };
 }
 
-export type RecommendationType = 'album' | 'artist' | 'music';
+export type RecommendationType = 'album' | 'artist' | 'song';
 export type RecommendationTag = string;
 
 export interface RecommendationPayload {
