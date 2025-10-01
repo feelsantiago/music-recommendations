@@ -1,8 +1,8 @@
 import { Gemini, GeminiModule } from '@music-ai/gemini';
 import { Recommendations } from '@music-ai/recommendations';
 import { Module } from '@nestjs/common';
-import { Config } from '../configuration/config';
-import { ConfigurationModule } from '../configuration/configuration.module';
+import { Config } from '../../configuration/config';
+import { ConfigurationModule } from '../../configuration/configuration.module';
 import { RecommendationRateLimits } from './rate-limits/recommendations-rate-limits';
 import { RecommendationController } from './recommendation.controller';
 

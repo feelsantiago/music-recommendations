@@ -2,13 +2,13 @@ import { TimeTrackerModule } from '@music-ai/time-tracker';
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { AuthModule } from './auth/auth.module';
 import { ConfigurationModule } from './configuration/configuration.module';
+import { AuthModule } from './domain/auth/auth.module';
+import { RecommendationModule } from './domain/recommendations/recommendation.module';
+import { TagModule } from './domain/tags/tags.module';
 import { CatchEverythingFilter } from './filters/catch-everything.filter';
 import { ResultInterceptor } from './interceptors/result.interceptor';
 import { MidlewaresModule } from './middlewares/middlewares.module';
-import { RecommendationModule } from './recommendations/recommendation.module';
-import { TagModule } from './tags/tags.module';
 
 @Module({
   imports: [
