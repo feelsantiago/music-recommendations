@@ -25,6 +25,8 @@
     "@sapphire/timestamp": "^1.0.5",
     "@tailwindcss/postcss": "^4.1.12",
     "axios": "^1.6.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "connect-redis": "^9.0.0",
     "cookie-parser": "^1.4.7",
     "csrf-csrf": "^4.0.3",
@@ -42,6 +44,7 @@
     "tailwindcss-primeui": "^0.6.1",
     "ts-pattern": "^5.8.0",
     "uninstall": "^0.0.0",
+    "validator": "^13.15.15",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

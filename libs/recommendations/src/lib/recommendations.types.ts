@@ -22,3 +22,8 @@ export interface RecommendationsLimits {
 }
 
 export type RecommendationType = 'album' | 'artist' | 'music';
+export type RecommendationTag = string;
+
+export interface RecommendationPayload {
+  tags: RecommendationTag[];
+}

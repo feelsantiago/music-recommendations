@@ -5,13 +5,15 @@ import {
   Recommendations,
 } from '@music-ai/recommendations';
 import {
+  Body,
   Controller,
-  Get,
   HttpCode,
   HttpStatus,
+  Post,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { RecommendationDto } from './dtos/recommendation.dto';
 import { RecommendationRateLimitGuard } from './rate-limits/recommendation-rate-limit.guard';
 import { RecommendationRateLimits } from './rate-limits/recommendations-rate-limits';
 import { RecommendationErrorInterceptor } from './recommendation-error.interceptor';
@@ -25,10 +27,13 @@ export class RecommendationController {
     private readonly _limits: RecommendationRateLimits,
   ) {}
 
-  @Get()
+  @Post()
   @HttpCode(HttpStatus.OK)
-  public async generate(): ResultAsync<Recommendation[], RecommendationError> {
-    const result = await this._recommendations.generate('album');
+  public async generate(
+    @Body() body: RecommendationDto,
+  ): ResultAsync<Recommendation[], RecommendationError> {
+    const tags = body.tags.map((tag) => tag.value);
+    const result = await this._recommendations.generate('album', tags);
     return result
       .inspect((response) => this._limits.used(response))
       .map((response) => response.recommendations);

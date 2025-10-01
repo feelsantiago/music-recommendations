@@ -1,6 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
 import { Module } from '@nestjs/common';
-import { RecommendationPrompt } from './domain/recommendation-prompt';
 import { Gemini } from './gemini';
 import {
   ConfigurableModuleClass,
@@ -8,11 +7,12 @@ import {
   MODEL,
   MODULE_OPTIONS_TOKEN,
 } from './gemini.module-definition';
+import { PromptRecommendation } from './prompt/prompt-recommendation';
 
 @Module({
   providers: [
     Gemini,
-    RecommendationPrompt,
+    PromptRecommendation,
     {
       provide: MODEL,
       useFactory: (options: GeminiModuleOptions) =>
@@ -22,6 +22,6 @@ import {
       inject: [MODULE_OPTIONS_TOKEN],
     },
   ],
-  exports: [Gemini, RecommendationPrompt],
+  exports: [Gemini, PromptRecommendation],
 })
 export class GeminiModule extends ConfigurableModuleClass {}

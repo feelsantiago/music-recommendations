@@ -23,8 +23,7 @@ export class RecommendationRateLimits {
     private readonly _recommendations: Recommendations,
   ) {
     const { tokens, requests } = this._recommendations.limits();
-    // this._tokens = RateLimit.create(tokens.minute);
-    this._tokens = RateLimit.test();
+    this._tokens = RateLimit.create(tokens.minute);
     this._requests = {
       minute: RateLimit.create(requests.minute),
       day: RateLimit.create(requests.day),

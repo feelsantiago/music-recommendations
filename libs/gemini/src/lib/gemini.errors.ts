@@ -1,10 +1,11 @@
 import { AppError, AppErrorOptions } from '@music-ai/common';
-import { PromptType } from './domain/prompt';
+import { PromptType } from './prompt/prompt';
 
 export type GeminiErrorName =
   | 'prompt_generation'
   | 'empty_prompt'
-  | 'parse_prompt_response';
+  | 'parse_prompt_response'
+  | 'empty_tags';
 
 export class GeminiError extends AppError {
   private constructor(
@@ -43,6 +44,20 @@ export class GeminiError extends AppError {
       'empty_prompt',
       '[Prompt - Response] - Response text is empty',
       options,
+    );
+  }
+
+  public static emptyTags(
+    source: AppError,
+    options: Omit<AppErrorOptions, 'name' | 'source'> = {},
+  ): GeminiError {
+    return new GeminiError(
+      'empty_tags',
+      '[Prompt - Response] - No tags provided',
+      {
+        ...options,
+        source,
+      },
     );
   }
 }

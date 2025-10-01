@@ -5,24 +5,26 @@ import {
   RecommendationResponse,
   Recommendations,
   RecommendationsLimits,
+  RecommendationTag,
   RecommendationType,
 } from '@music-ai/recommendations';
 import { Injectable } from '@nestjs/common';
 import { match, P } from 'ts-pattern';
-import { RecommendationPrompt } from './domain/recommendation-prompt';
 import { GeminiError } from './gemini.errors';
+import { PromptRecommendation } from './prompt/prompt-recommendation';
 
 @Injectable()
 export class Gemini implements Recommendations {
-  constructor(private readonly _prompt: RecommendationPrompt) {}
+  constructor(private readonly _prompt: PromptRecommendation) {}
 
   public async generate(
     type: RecommendationType,
+    tags: RecommendationTag[],
   ): ResultAsync<RecommendationResponse, RecommendationError> {
     const result = await match(type)
-      .with('album', () => this._prompt.album())
-      .with('artist', () => this._prompt.artist())
-      .with('music', () => this._prompt.music())
+      .with('album', () => this._prompt.album(tags))
+      .with('artist', () => this._prompt.artist(tags))
+      .with('music', () => this._prompt.music(tags))
       .exhaustive();
 
     return safeTry(function* ({ $ }) {
@@ -50,8 +52,9 @@ export class Gemini implements Recommendations {
   private _error(error: GeminiError): RecommendationError {
     return match(error.type)
       .with('prompt_generation', () => RecommendationError.generate(error))
-      .with(P.union('empty_prompt', 'parse_prompt_response'), () =>
-        RecommendationError.invalid(error),
+      .with(
+        P.union('empty_prompt', 'parse_prompt_response', 'empty_tags'),
+        () => RecommendationError.invalid(error),
       )
       .exhaustive();
   }

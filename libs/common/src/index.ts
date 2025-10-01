@@ -2,6 +2,7 @@ export * from './lib/app-error';
 export * from './lib/app-error-interceptor';
 export * from './lib/duration';
 export * from './lib/limited-value';
+export * from './lib/not-empty-list';
 export * from './lib/option';
 export * from './lib/rate-limit';
 export * from './lib/result';
