@@ -3,6 +3,7 @@ import {
   Recommendation,
   RecommendationError,
   Recommendations,
+  RecommendationType,
 } from '@music-ai/recommendations';
 import {
   Body,
@@ -10,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -31,9 +33,10 @@ export class RecommendationController {
   @HttpCode(HttpStatus.OK)
   public async generate(
     @Body() body: RecommendationDto,
+    @Query('type') type: RecommendationType,
   ): ResultAsync<Recommendation[], RecommendationError> {
     const tags = body.tags.map((tag) => tag.value);
-    const result = await this._recommendations.generate('album', tags);
+    const result = await this._recommendations.generate(type, tags);
     return result
       .inspect((response) => this._limits.used(response))
       .map((response) => response.recommendations);
