@@ -5,22 +5,25 @@ import {
 } from '../recommendations.types';
 
 export class Prompt {
-  constructor(public readonly type: RecommendationType) {}
+  constructor(
+    public readonly type: RecommendationType,
+    public readonly length: number,
+  ) {}
 
-  public static song(): Prompt {
-    return new Prompt('song');
+  public static song(length: number): Prompt {
+    return new Prompt('song', length);
   }
 
-  public static album(): Prompt {
-    return new Prompt('album');
+  public static album(length: number): Prompt {
+    return new Prompt('album', length);
   }
 
-  public static artist(): Prompt {
-    return new Prompt('artist');
+  public static artist(length: number): Prompt {
+    return new Prompt('artist', length);
   }
 
   public text(tags: RecommendationTag[]): Result<string, AppError> {
-    const base = `Recommend to me 5 music ${this.type}`;
+    const base = `Recommend to me ${this.length} music ${this.type}`;
     return NotEmptyList.create(tags).map(
       (list) => `${base} ${this._tags(list)}`,
     );

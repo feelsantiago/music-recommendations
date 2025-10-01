@@ -2,6 +2,7 @@ import { ConfigurableModuleBuilder } from '@nestjs/common';
 
 export interface GeminiModuleOptions {
   apiKey: string;
+  recommendationLength: number;
 }
 
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =

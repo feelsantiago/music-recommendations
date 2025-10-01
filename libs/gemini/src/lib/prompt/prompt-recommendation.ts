@@ -9,7 +9,11 @@ import { Prompt, RecommendationTag } from '@music-ai/recommendations';
 import { Inject, Injectable } from '@nestjs/common';
 import { Result } from '@sapphire/result';
 import { GeminiError } from '../gemini.errors';
-import { MODEL } from '../gemini.module-definition';
+import {
+  GeminiModuleOptions,
+  MODEL,
+  MODULE_OPTIONS_TOKEN,
+} from '../gemini.module-definition';
 import { PromptResponse } from './prompt-response';
 
 export const PROMPT_SCHEMA = {
@@ -35,12 +39,16 @@ export class PromptRecommendation {
     };
   }
 
-  constructor(@Inject(MODEL) private readonly _ai: GoogleGenAI) {}
+  constructor(
+    @Inject(MODEL) private readonly _ai: GoogleGenAI,
+    @Inject(MODULE_OPTIONS_TOKEN)
+    private readonly _options: GeminiModuleOptions,
+  ) {}
 
   public async album(
     tags: RecommendationTag[],
   ): ResultAsync<PromptResponse, GeminiError> {
-    const prompt = Prompt.album();
+    const prompt = Prompt.album(this._options.recommendationLength);
     return this._generate(prompt, tags);
   }
 

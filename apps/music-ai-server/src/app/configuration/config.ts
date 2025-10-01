@@ -61,4 +61,10 @@ export class Config {
   public aiKey(): string {
     return Option.from(() => this._config.get<string>('AI_KEY')).unwrapOr('');
   }
+
+  public recommendationLength(): number {
+    return Option.from(() => this._config.get<number>('RECOMMENDATION_LENGTH'))
+      .map((value) => Number(value))
+      .unwrapOr(5);
+  }
 }
