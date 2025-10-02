@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Recommendation } from '@music-ai/recommendations';
 import { Skeleton } from 'primeng/skeleton';
 
 @Component({
@@ -12,5 +13,5 @@ import { Skeleton } from 'primeng/skeleton';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationItemComponent {
-  public readonly item = input<number>();
+  public readonly item = input<Recommendation>();
 }

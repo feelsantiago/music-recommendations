@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { Toolbar } from 'primeng/toolbar';
-import { Recommendation } from '../../domain/recommendation/recommendation.service';
+import { Recommendations } from '../../domain/recommendation/recommendations.service';
 
 @Component({
   selector: 'msc-recommendation-controls',
@@ -30,13 +30,13 @@ import { Recommendation } from '../../domain/recommendation/recommendation.servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommnedationControlsComponent {
-  constructor(private readonly _recommendation: Recommendation) {}
+  constructor(private readonly _recommendations: Recommendations) {}
 
   public onNext(): void {
-    this._recommendation.next();
+    this._recommendations.next();
   }
 
   public onPrev(): void {
-    this._recommendation.prev();
+    this._recommendations.prev();
   }
 }

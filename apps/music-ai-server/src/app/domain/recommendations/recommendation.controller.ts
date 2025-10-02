@@ -16,6 +16,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { RecommendationDto } from './dtos/recommendation.dto';
+import { RecommendationTypePipe } from './pipes/recommendation-type.pipe';
 import { RecommendationRateLimitGuard } from './rate-limits/recommendation-rate-limit.guard';
 import { RecommendationRateLimits } from './rate-limits/recommendations-rate-limits';
 import { RecommendationErrorInterceptor } from './recommendation-error.interceptor';
@@ -33,7 +34,7 @@ export class RecommendationController {
   @HttpCode(HttpStatus.OK)
   public async generate(
     @Body() body: RecommendationDto,
-    @Query('type') type: RecommendationType,
+    @Query('type', RecommendationTypePipe) type: RecommendationType,
   ): ResultAsync<Recommendation[], RecommendationError> {
     const tags = body.tags.map((tag) => tag.value);
     const result = await this._recommendations.generate(type, tags);

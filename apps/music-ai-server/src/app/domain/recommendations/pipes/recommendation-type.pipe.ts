@@ -1,9 +1,10 @@
 import { Option } from '@music-ai/common';
 import { RecommendationType } from '@music-ai/recommendations';
-import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { match } from 'ts-pattern';
 
-export class RecommendationPipe implements PipeTransform {
+@Injectable()
+export class RecommendationTypePipe implements PipeTransform {
   public transform(
     value: string | undefined | null,
     _: ArgumentMetadata,

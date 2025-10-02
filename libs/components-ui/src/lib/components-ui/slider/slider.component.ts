@@ -31,4 +31,8 @@ export class SliderComponent {
   public prev(): void {
     this._slider().prev();
   }
+
+  public update(): void {
+    this._slider().update();
+  }
 }

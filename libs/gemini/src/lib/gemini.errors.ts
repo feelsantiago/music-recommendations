@@ -1,5 +1,5 @@
 import { AppError, AppErrorOptions } from '@music-ai/common';
-import { PromptType } from './prompt/prompt';
+import { RecommendationType } from '@music-ai/recommendations';
 
 export type GeminiErrorName =
   | 'prompt_generation'
@@ -17,7 +17,7 @@ export class GeminiError extends AppError {
   }
 
   public static generate(
-    type: PromptType,
+    type: RecommendationType,
     options: Omit<AppErrorOptions, 'name'> = {},
   ): GeminiError {
     return new GeminiError(
