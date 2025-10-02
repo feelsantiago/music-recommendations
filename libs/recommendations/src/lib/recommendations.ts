@@ -13,5 +13,10 @@ export abstract class Recommendations {
     tags: RecommendationTag[],
   ): ResultAsync<RecommendationResponse, RecommendationError>;
 
+  public abstract extend(
+    type: RecommendationType,
+    cache: string,
+  ): ResultAsync<RecommendationResponse, RecommendationError>;
+
   public abstract limits(): RecommendationsLimits;
 }

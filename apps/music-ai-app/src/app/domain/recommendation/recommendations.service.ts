@@ -59,7 +59,7 @@ export class Recommendations {
     const fetch$ = this._api
       .fetch({ tags })
       .pipe
-      // catch rate limit errors
+      // TODO: catch rate limit errors
       ();
 
     return iif(() => tags.length === 0, of([]), fetch$);

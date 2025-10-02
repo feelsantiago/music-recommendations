@@ -1,19 +1,19 @@
-import {
-  GenerateContentConfig,
-  GenerateContentResponse,
-  GoogleGenAI,
-  Type,
-} from '@google/genai';
+import { GenerateContentConfig, Type } from '@google/genai';
 import { ResultAsync, safeTryBind } from '@music-ai/common';
-import { Prompt, RecommendationTag } from '@music-ai/recommendations';
+import {
+  Prompt,
+  RecommendationTag,
+  RecommendationType,
+} from '@music-ai/recommendations';
 import { Inject, Injectable } from '@nestjs/common';
-import { Result } from '@sapphire/result';
+import { match } from 'ts-pattern';
 import { GeminiError } from '../gemini.errors';
 import {
   GeminiModuleOptions,
-  MODEL,
   MODULE_OPTIONS_TOKEN,
 } from '../gemini.module-definition';
+import { PromptCachedContent } from './prompt-cached-content';
+import { PromptContent } from './prompt-content';
 import { PromptResponse } from './prompt-response';
 
 export const PROMPT_SCHEMA = {
@@ -30,8 +30,6 @@ export const PROMPT_SCHEMA = {
 
 @Injectable()
 export class PromptRecommendation {
-  private readonly _model = 'gemini-2.5-flash';
-
   private get _config(): GenerateContentConfig {
     return {
       responseMimeType: 'application/json',
@@ -39,54 +37,47 @@ export class PromptRecommendation {
     };
   }
 
+  private get _length(): number {
+    return this._options.recommendationLength;
+  }
+
   constructor(
-    @Inject(MODEL) private readonly _ai: GoogleGenAI,
+    private readonly _content: PromptContent,
+    private readonly _cache: PromptCachedContent,
     @Inject(MODULE_OPTIONS_TOKEN)
     private readonly _options: GeminiModuleOptions,
   ) {}
 
-  public async album(
-    tags: RecommendationTag[],
-  ): ResultAsync<PromptResponse, GeminiError> {
-    const prompt = Prompt.album(this._options.recommendationLength);
-    return this._generate(prompt, tags);
-  }
-
-  public async artist(
-    tags: RecommendationTag[],
-  ): ResultAsync<PromptResponse, GeminiError> {
-    const prompt = Prompt.artist(this._options.recommendationLength);
-    return this._generate(prompt, tags);
-  }
-
-  public async song(
-    tags: RecommendationTag[],
-  ): ResultAsync<PromptResponse, GeminiError> {
-    const prompt = Prompt.song(this._options.recommendationLength);
-    return this._generate(prompt, tags);
-  }
-
-  private async _generate(
-    prompt: Prompt,
+  public async generate(
+    type: RecommendationType,
     tags: RecommendationTag[],
   ): ResultAsync<PromptResponse, GeminiError> {
     return safeTryBind(this, async function* ({ $ }) {
-      const text = yield* $(
-        prompt.text(tags).mapErr((error) => GeminiError.emptyTags(error)),
+      const prompt = this._prompt(type);
+      const context = yield* $(
+        prompt.context(tags).mapErr((error) => GeminiError.emptyTags(error)),
       );
-
-      const result = await Result.fromAsync<GenerateContentResponse, Error>(
-        () =>
-          this._ai.models.generateContent({
-            model: this._model,
-            contents: text,
-            config: this._config,
-          }),
-      );
-
-      return result
-        .mapErr((error) => GeminiError.generate(prompt.type, { source: error }))
-        .map((response) => PromptResponse.from(response));
+      return this._content.generate(prompt, context, this._config);
     });
+  }
+
+  public async extend(
+    type: RecommendationType,
+    cache: string,
+  ): ResultAsync<PromptResponse, GeminiError> {
+    const prompt = this._prompt(type);
+    const context = prompt.extend();
+    return this._content.generate(prompt, context, {
+      ...this._config,
+      cachedContent: cache,
+    });
+  }
+
+  private _prompt(type: RecommendationType): Prompt {
+    return match(type)
+      .with('album', () => Prompt.album(this._length))
+      .with('artist', () => Prompt.artist(this._length))
+      .with('song', () => Prompt.song(this._length))
+      .exhaustive();
   }
 }

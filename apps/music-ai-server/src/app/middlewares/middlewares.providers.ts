@@ -10,7 +10,7 @@ export const COOKIE_SETTINGS = Symbol('COOKIE_SETTINGS');
 export const globalMiddlewaresProviders: Provider[] = [
   {
     provide: COOKIE_MAX_AGE,
-    useValue: Duration.days(1),
+    useValue: Duration.minutes(15),
   },
   {
     provide: COOKIE_SETTINGS,

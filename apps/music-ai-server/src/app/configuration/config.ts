@@ -67,4 +67,16 @@ export class Config {
       .map((value) => Number(value))
       .unwrapOr(5);
   }
+
+  public contextCache(): boolean {
+    return Option.from(() => this._config.get<boolean>('CONTEXT_CACHE'))
+      .map((value) => Boolean(value))
+      .unwrapOr(false);
+  }
+
+  public model(): string {
+    return Option.from(() => this._config.get<string>('MODEL')).unwrapOr(
+      'text-bison-001',
+    );
+  }
 }

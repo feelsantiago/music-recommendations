@@ -22,11 +22,15 @@ export class Prompt {
     return new Prompt('artist', length);
   }
 
-  public text(tags: RecommendationTag[]): Result<string, AppError> {
+  public context(tags: RecommendationTag[]): Result<string, AppError> {
     const base = `Recommend to me ${this.length} music ${this.type}`;
     return NotEmptyList.create(tags).map(
       (list) => `${base} ${this._tags(list)}`,
     );
+  }
+
+  public extend(): string {
+    return `Recommend for me ${this.length} more music ${this.type}`;
   }
 
   public _tags(tags: NotEmptyList<RecommendationTag>): string {

@@ -9,26 +9,28 @@ import { SliderComponent, SliderItemDirective } from '@music-ai/components-ui';
 import { Recommendation } from '@music-ai/recommendations';
 import { rxEffects } from '@rx-angular/state/effects';
 import { Recommendations } from '../../domain/recommendation/recommendations.service';
-import { RecommendationItemComponent } from './recommendation-item.component';
+import {
+  RecommendationEmptyItemComponent,
+  RecommendationItemComponent,
+} from './recommendation-item.component';
 
 @Component({
   selector: 'msc-recommendation',
   template: `
     <msc-ui-slider>
       @for (recommendation of recommendations(); track recommendation.album) {
-        <msc-recommendation-item [item]="recommendation" mscUiSliderItem>
-          {{ recommendation.album }}
-        </msc-recommendation-item>
+        <msc-recommendation-item [item]="recommendation" mscUiSliderItem />
       } @empty {
-        <msc-recommendation-item
-          [item]="{ album: '', artist: '' }"
-          mscUiSliderItem
-        >
-        </msc-recommendation-item>
+        <msc-recommendation-empty-item mscUiSliderItem />
       }
     </msc-ui-slider>
   `,
-  imports: [RecommendationItemComponent, SliderComponent, SliderItemDirective],
+  imports: [
+    RecommendationItemComponent,
+    RecommendationEmptyItemComponent,
+    SliderComponent,
+    SliderItemDirective,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationComponent {
