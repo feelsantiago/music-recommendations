@@ -33,9 +33,7 @@ export class Recommendations {
   ) {
     const tags$ = this._tags.selected$.pipe(
       map((tags) => tags.map((tag) => tag.name)),
-      switchMap((tags) =>
-        iif(() => tags.length === 0, of([]), merge(of([]), this.fetch(tags))),
-      ),
+      switchMap((tags) => merge(of([]), this.fetch(tags))),
     );
 
     this._state.connect('recommendations', tags$);
@@ -58,10 +56,12 @@ export class Recommendations {
   }
 
   public fetch(tags: RecommendationTag[]): Observable<Recommendation[]> {
-    return this._api
+    const fetch$ = this._api
       .fetch({ tags })
       .pipe
       // catch rate limit errors
       ();
+
+    return iif(() => tags.length === 0, of([]), fetch$);
   }
 }
