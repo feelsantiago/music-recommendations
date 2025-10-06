@@ -6,7 +6,7 @@ import {
   output,
 } from '@angular/core';
 import KeenSlider, { KeenSliderInstance, KeenSliderPlugin } from 'keen-slider';
-import { SliderIndex } from './types';
+import { SlideIndex } from './types';
 
 const MutationPlugin: KeenSliderPlugin = (slider) => {
   const observer = new MutationObserver(function (mutations) {
@@ -29,7 +29,7 @@ const MutationPlugin: KeenSliderPlugin = (slider) => {
 })
 export class SliderDirective implements AfterViewInit, OnDestroy {
   public slider!: KeenSliderInstance;
-  public slideChanged = output<SliderIndex>();
+  public slideChanged = output<SlideIndex>();
 
   constructor(private readonly _element: ElementRef<HTMLHtmlElement>) {}
 

@@ -1,11 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   output,
   viewChild,
 } from '@angular/core';
 import { SliderDirective } from './slider.directive';
-import { SliderIndex } from './types';
+import { SlideIndex } from './types';
 
 @Component({
   selector: 'msc-ui-slider',
@@ -21,8 +22,16 @@ import { SliderIndex } from './types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SliderComponent {
-  public slideChanged = output<SliderIndex>();
+  public slideChanged = output<SlideIndex>();
   private readonly _slider = viewChild.required(SliderDirective);
+
+  constructor() {
+    effect(() => {
+      this._slider().slideChanged.subscribe((value) =>
+        this.slideChanged.emit(value),
+      );
+    });
+  }
 
   public next(): void {
     this._slider().next();

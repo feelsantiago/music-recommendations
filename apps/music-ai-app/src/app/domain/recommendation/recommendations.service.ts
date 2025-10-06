@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Option } from '@music-ai/common';
 import { Recommendation, RecommendationTag } from '@music-ai/recommendations';
 import { rxState } from '@rx-angular/state';
 import {
@@ -16,16 +17,23 @@ import { RecommendationsApi } from './recommendations.api';
 
 interface RecommendationState {
   recommendations: Recommendation[];
+  current: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class Recommendations {
   private _state = rxState<RecommendationState>(({ set }) =>
-    set({ recommendations: [] }),
+    set({ recommendations: [], current: 0 }),
   );
   private readonly _controller$ = new Subject<'next' | 'prev'>();
 
   public recommendations$ = this._state.select('recommendations');
+  public current$ = this._state.select(
+    ['recommendations', 'current'],
+    ({ recommendations, current }) => Option.from(recommendations[current]),
+  );
+  public index$ = this._state.select('current');
+  public total$ = this._state.select('recommendations', (r) => r.length);
 
   constructor(
     private readonly _tags: Tags,
@@ -53,6 +61,10 @@ export class Recommendations {
 
   public prev(): void {
     this._controller$.next('prev');
+  }
+
+  public current(index: number): void {
+    this._state.set('current', () => index);
   }
 
   public fetch(tags: RecommendationTag[]): Observable<Recommendation[]> {

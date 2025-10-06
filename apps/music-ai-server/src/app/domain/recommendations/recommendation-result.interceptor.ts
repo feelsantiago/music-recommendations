@@ -1,4 +1,4 @@
-import { Option, Result } from '@music-ai/common';
+import { Result } from '@music-ai/common';
 import {
   Recommendation,
   RecommendationError,
@@ -28,24 +28,11 @@ export class RecommendationResultInterceptor implements NestInterceptor {
       map((data) =>
         data
           .inspect((data) => this._limits.used(data))
-          .inspect((data) => this._store(session, data))
+          .inspect((data) => {
+            session.history = data.metadata.history;
+          })
           .map((response) => response.recommendations),
       ),
     );
-  }
-
-  private _store(
-    session: Record<string, unknown>,
-    { metadata: { history } }: RecommendationResponse,
-  ) {
-    console.log('BEFORE', session.history);
-    Option.from(session.history).match({
-      some: () => (session.history = history),
-      none: () => {
-        session.history = [];
-      },
-    });
-
-    console.log('AFTER', session.recommendation);
   }
 }

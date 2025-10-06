@@ -5,7 +5,11 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { SliderComponent, SliderItemDirective } from '@music-ai/components-ui';
+import {
+  SlideIndex,
+  SliderComponent,
+  SliderItemDirective,
+} from '@music-ai/components-ui';
 import { Recommendation } from '@music-ai/recommendations';
 import { rxEffects } from '@rx-angular/state/effects';
 import { Recommendations } from '../../domain/recommendation/recommendations.service';
@@ -17,7 +21,7 @@ import {
 @Component({
   selector: 'msc-recommendation',
   template: `
-    <msc-ui-slider>
+    <msc-ui-slider (slideChanged)="onSlideChange($event)">
       @for (recommendation of recommendations(); track recommendation.album) {
         <msc-recommendation-item [item]="recommendation" mscUiSliderItem />
       } @empty {
@@ -50,5 +54,9 @@ export class RecommendationComponent {
     this.recommendations = toSignal(this._recommendations.recommendations$, {
       initialValue: [],
     });
+  }
+
+  public onSlideChange(index: SlideIndex): void {
+    this._recommendations.current(index);
   }
 }

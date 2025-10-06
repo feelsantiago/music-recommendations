@@ -1,1 +1,1 @@
-export type SliderIndex = number;
+export type SlideIndex = number;
