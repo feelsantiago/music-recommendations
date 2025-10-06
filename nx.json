@@ -17,7 +17,9 @@
   "tui": {
     "enabled": false
   },
-  "nxCloudId": "68b2e47b40dbff16d04984a7",
+  "nxCloudConfig": {
+    "neverConnectToCloud": true
+  },
   "targetDefaults": {
     "@angular/build:application": {
       "cache": true,
