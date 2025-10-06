@@ -1,10 +1,16 @@
 import nx from '@nx/eslint-plugin';
+import angular from 'angular-eslint';
+import tseslint from 'typescript-eslint';
 import baseConfig from '../../eslint.config.mjs';
 
 export default [
   ...baseConfig,
   ...nx.configs['flat/angular'],
-  ...nx.configs['flat/angular-template'],
+  ...tseslint.config({
+    files: ['**/*.html'],
+    extends: [...angular.configs.templateRecommended],
+    rules: {},
+  }),
   {
     files: ['**/*.ts'],
     rules: {
@@ -27,13 +33,6 @@ export default [
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       '@angular-eslint/prefer-inject': 'off',
       '@angular-eslint/no-input-rename': 'off',
-      '@angular-eslint/template/click-events-have-key-events': 'off',
-      '@angular-eslint/template/interactive-supports-focus': 'off',
     },
-  },
-  {
-    files: ['**/*.html'],
-    // Override or add rules here
-    rules: {},
   },
 ];
