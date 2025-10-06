@@ -7,12 +7,16 @@ import {
   MODEL,
   MODULE_OPTIONS_TOKEN,
 } from './gemini.module-definition';
+import { PromptCachedContent } from './prompt/prompt-cached-content';
+import { PromptContent } from './prompt/prompt-content';
 import { PromptRecommendation } from './prompt/prompt-recommendation';
 
 @Module({
   providers: [
     Gemini,
     PromptRecommendation,
+    PromptContent,
+    PromptCachedContent,
     {
       provide: MODEL,
       useFactory: (options: GeminiModuleOptions) =>

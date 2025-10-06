@@ -5,7 +5,6 @@ export type GeminiErrorName =
   | 'prompt_generation'
   | 'empty_prompt'
   | 'parse_prompt_response'
-  | 'cache_generation_error'
   | 'empty_tags';
 
 export class GeminiError extends AppError {
@@ -45,16 +44,6 @@ export class GeminiError extends AppError {
       'empty_prompt',
       '[Prompt - Response] - Response text is empty',
       options,
-    );
-  }
-
-  public static cache(source: Error): GeminiError {
-    return new GeminiError(
-      'cache_generation_error',
-      '[Prompt - Response] - Response text is empty',
-      {
-        source,
-      },
     );
   }
 

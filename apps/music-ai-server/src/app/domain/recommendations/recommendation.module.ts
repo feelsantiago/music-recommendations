@@ -13,8 +13,7 @@ import { RecommendationController } from './recommendation.controller';
       inject: [Config],
       useFactory: (config: Config) => ({
         apiKey: config.aiKey(),
-        recommendationLength: config.recommendationLength(),
-        contextCaching: config.contextCache(),
+        recommendations: config.recommendationLength(),
         model: config.model(),
       }),
     }),

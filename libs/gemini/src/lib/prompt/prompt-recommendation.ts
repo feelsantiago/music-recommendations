@@ -2,6 +2,7 @@ import { GenerateContentConfig, Type } from '@google/genai';
 import { ResultAsync, safeTryBind } from '@music-ai/common';
 import {
   Prompt,
+  RecommendationHistory,
   RecommendationTag,
   RecommendationType,
 } from '@music-ai/recommendations';
@@ -12,7 +13,6 @@ import {
   GeminiModuleOptions,
   MODULE_OPTIONS_TOKEN,
 } from '../gemini.module-definition';
-import { PromptCachedContent } from './prompt-cached-content';
 import { PromptContent } from './prompt-content';
 import { PromptResponse } from './prompt-response';
 
@@ -38,12 +38,11 @@ export class PromptRecommendation {
   }
 
   private get _length(): number {
-    return this._options.recommendationLength;
+    return this._options.recommendations;
   }
 
   constructor(
     private readonly _content: PromptContent,
-    private readonly _cache: PromptCachedContent,
     @Inject(MODULE_OPTIONS_TOKEN)
     private readonly _options: GeminiModuleOptions,
   ) {}
@@ -57,20 +56,18 @@ export class PromptRecommendation {
       const context = yield* $(
         prompt.context(tags).mapErr((error) => GeminiError.emptyTags(error)),
       );
-      return this._content.generate(prompt, context, this._config);
+
+      return this._content.generate(context, prompt.type, this._config);
     });
   }
 
   public async extend(
     type: RecommendationType,
-    cache: string,
+    history: RecommendationHistory[],
   ): ResultAsync<PromptResponse, GeminiError> {
     const prompt = this._prompt(type);
     const context = prompt.extend();
-    return this._content.generate(prompt, context, {
-      ...this._config,
-      cachedContent: cache,
-    });
+    return this._content.generate(context, prompt.type, this._config, history);
   }
 
   private _prompt(type: RecommendationType): Prompt {

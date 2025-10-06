@@ -2,6 +2,7 @@ import { ResultAsync, safeTryBind } from '@music-ai/common';
 import {
   Recommendation,
   RecommendationError,
+  RecommendationHistory,
   RecommendationResponse,
   Recommendations,
   RecommendationsLimits,
@@ -20,29 +21,18 @@ export class Gemini implements Recommendations {
   public async generate(
     type: RecommendationType,
     tags: RecommendationTag[],
+    history: RecommendationHistory[] = [],
   ): ResultAsync<RecommendationResponse, RecommendationError> {
     const result = await safeTryBind(this, async function* ({ $async }) {
-      const response = yield* $async(this._prompt.generate(type, tags));
+      const request = match(history.length)
+        .with(P.number.positive(), () => this._prompt.extend(type, history))
+        .otherwise(() => this._prompt.generate(type, tags));
+      const response = yield* $async(request);
+
       return response.data<Recommendation[]>().map((recommendations) => ({
         id: response.id,
         recommendations,
-        metadata: { tokens: response.tokens.total },
-      }));
-    });
-
-    return result.mapErr((error) => this._error(error));
-  }
-
-  public async extend(
-    type: RecommendationType,
-    cache: string,
-  ): ResultAsync<RecommendationResponse, RecommendationError> {
-    const result = await safeTryBind(this, async function* ({ $async }) {
-      const response = yield* $async(this._prompt.extend(type, cache));
-      return response.data<Recommendation[]>().map((recommendations) => ({
-        id: response.id,
-        recommendations,
-        metadata: { tokens: response.tokens.total },
+        metadata: { tokens: response.tokens.total, history: response.history },
       }));
     });
 
@@ -63,9 +53,7 @@ export class Gemini implements Recommendations {
 
   private _error(error: GeminiError): RecommendationError {
     return match(error.type)
-      .with(P.union('prompt_generation', 'cache_generation_error'), () =>
-        RecommendationError.generate(error),
-      )
+      .with('prompt_generation', () => RecommendationError.generate(error))
       .with(
         P.union('empty_prompt', 'parse_prompt_response', 'empty_tags'),
         () => RecommendationError.invalid(error),

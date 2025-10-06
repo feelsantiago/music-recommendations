@@ -4,7 +4,10 @@ import {
   GoogleGenAI,
 } from '@google/genai';
 import { Result, ResultAsync } from '@music-ai/common';
-import { Prompt } from '@music-ai/recommendations';
+import {
+  RecommendationHistory,
+  RecommendationType,
+} from '@music-ai/recommendations';
 import { Inject, Injectable } from '@nestjs/common';
 import { GeminiError } from '../gemini.errors';
 import {
@@ -23,20 +26,25 @@ export class PromptContent {
   ) {}
 
   public async generate(
-    prompt: Prompt,
-    context: string,
+    message: string,
+    type: RecommendationType,
     config: GenerateContentConfig = {},
+    history: RecommendationHistory[] = [],
   ): ResultAsync<PromptResponse, GeminiError> {
-    const result = await Result.fromAsync<GenerateContentResponse, Error>(() =>
-      this._ai.models.generateContent({
-        model: this._options.model,
-        contents: context,
-        config,
-      }),
+    const result = await Result.fromAsync<GenerateContentResponse, Error>(
+      () => {
+        const chat = this._ai.chats.create({
+          model: this._options.model,
+          history: history,
+          config,
+        });
+
+        return chat.sendMessage({ message: message });
+      },
     );
 
     return result
-      .mapErr((error) => GeminiError.generate(prompt.type, { source: error }))
-      .map((response) => PromptResponse.from(response));
+      .mapErr((error) => GeminiError.generate(type, { source: error }))
+      .map((response) => PromptResponse.from(response, message, history));
   }
 }

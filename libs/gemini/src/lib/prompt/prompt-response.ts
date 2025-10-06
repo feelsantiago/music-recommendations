@@ -1,5 +1,6 @@
 import { GenerateContentResponse } from '@google/genai';
 import { Option, Result } from '@music-ai/common';
+import { RecommendationHistory } from '@music-ai/recommendations';
 import { GeminiError } from '../gemini.errors';
 
 interface TokenCount {
@@ -20,10 +21,15 @@ export class PromptResponse {
   constructor(
     public readonly id: string,
     public readonly tokens: TokenCount,
-    private readonly _text: Option<string>,
+    public readonly text: Option<string>,
+    public readonly history: RecommendationHistory[],
   ) {}
 
-  public static from(response: GenerateContentResponse): PromptResponse {
+  public static from(
+    response: GenerateContentResponse,
+    message: string,
+    history: RecommendationHistory[] = [],
+  ): PromptResponse {
     const text = Option.from(response.text);
     const id = response.responseId ?? 'No Response ID';
     const {
@@ -37,12 +43,16 @@ export class PromptResponse {
       id,
       { prompt, candidates, total, thoughts },
       text,
+      [...history, { role: 'user', parts: [{ text: message }] }],
     );
   }
 
   public data<T>(): Result<T, GeminiError> {
-    return this._text
+    return this.text
       .okOr(GeminiError.empty())
+      .inspect((data) =>
+        this.history.push({ role: 'model', parts: [{ text: data }] }),
+      )
       .andThen((text: string) =>
         Result.from(() => JSON.parse(text)).mapErr(() =>
           GeminiError.parse({ metadata: { text } }),

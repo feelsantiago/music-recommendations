@@ -3,11 +3,17 @@ export interface Recommendation {
   artist: string;
 }
 
+export interface RecommendationHistory {
+  role: 'user' | 'model';
+  parts: { text: string }[];
+}
+
 export interface RecommendationResponse {
   id: string;
   recommendations: Recommendation[];
   metadata: {
     tokens: number;
+    history: RecommendationHistory[];
   };
 }
 
