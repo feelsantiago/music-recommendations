@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
   Signal,
   viewChild,
 } from '@angular/core';
@@ -62,7 +61,6 @@ export class RecommendationComponent {
     this.recommendations = toSignal(this._recommendations.recommendations$, {
       initialValue: [],
     });
-    effect(() => console.log(this.recommendations()));
   }
 
   public onSlideChange(index: SlideIndex): void {
