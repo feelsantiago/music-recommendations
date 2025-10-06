@@ -3,12 +3,15 @@ import { Option } from '@music-ai/common';
 import { Recommendation, RecommendationTag } from '@music-ai/recommendations';
 import { rxState } from '@rx-angular/state';
 import {
+  combineLatest,
   filter,
   iif,
   map,
   merge,
   Observable,
   of,
+  scan,
+  startWith,
   Subject,
   switchMap,
 } from 'rxjs';
@@ -33,7 +36,10 @@ export class Recommendations {
     ({ recommendations, current }) => Option.from(recommendations[current]),
   );
   public index$ = this._state.select('current');
-  public total$ = this._state.select('recommendations', (r) => r.length);
+  public length$ = this._state.select(
+    'recommendations',
+    (r) => r.length && r.length - 1,
+  );
 
   constructor(
     private readonly _tags: Tags,
@@ -44,7 +50,27 @@ export class Recommendations {
       switchMap((tags) => merge(of([]), this.fetch(tags))),
     );
 
-    this._state.connect('recommendations', tags$);
+    const next$ = combineLatest([
+      this._tags.selected$,
+      this.index$,
+      this.length$,
+    ]).pipe(
+      filter(([_, __, length]) => length > 0),
+      filter(([_, index, length]) => index === length),
+      map(([tags]) => tags.map((tag) => tag.name)),
+      switchMap((tags) => this._api.more({ tags })),
+      scan(
+        (recommendations, next) => [...recommendations, ...next],
+        <Recommendation[]>[],
+      ),
+    );
+
+    const recommendations$ = combineLatest([
+      tags$,
+      next$.pipe(startWith([])),
+    ]).pipe(map(([tags, next]) => [...tags, ...next]));
+
+    this._state.connect('recommendations', recommendations$);
   }
 
   public readonly controller$ = this._controller$.asObservable();

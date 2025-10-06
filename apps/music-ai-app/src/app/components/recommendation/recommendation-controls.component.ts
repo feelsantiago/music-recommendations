@@ -49,7 +49,7 @@ export class RecommnedationControlsComponent {
 
     this.nextDisabled$ = combineLatest([
       this._recommendations.index$,
-      this._recommendations.total$.pipe(map((total) => total - 1)),
+      this._recommendations.length$,
     ]).pipe(map(([index, length]) => index === length));
 
     this.current$ = this._recommendations.current$.pipe(

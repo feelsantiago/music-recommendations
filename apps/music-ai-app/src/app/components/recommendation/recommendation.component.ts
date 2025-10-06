@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   Signal,
   viewChild,
 } from '@angular/core';
@@ -22,10 +23,17 @@ import {
   selector: 'msc-recommendation',
   template: `
     <msc-ui-slider (slideChanged)="onSlideChange($event)">
-      @for (recommendation of recommendations(); track recommendation.album) {
-        <msc-recommendation-item [item]="recommendation" mscUiSliderItem />
+      @for (
+        recommendation of recommendations();
+        track recommendation.album;
+        let i = $index
+      ) {
+        <msc-recommendation-item
+          [item]="recommendation"
+          [mscUiSliderItem]="i"
+        />
       } @empty {
-        <msc-recommendation-empty-item mscUiSliderItem />
+        <msc-recommendation-empty-item [mscUiSliderItem]="0" />
       }
     </msc-ui-slider>
   `,
@@ -54,6 +62,7 @@ export class RecommendationComponent {
     this.recommendations = toSignal(this._recommendations.recommendations$, {
       initialValue: [],
     });
+    effect(() => console.log(this.recommendations()));
   }
 
   public onSlideChange(index: SlideIndex): void {

@@ -21,4 +21,11 @@ export class RecommendationsApi {
   public fetch(tags: RecommendationPayload): Observable<Recommendation[]> {
     return this._http.post<Recommendation[]>(`${this.url}?type=album`, tags);
   }
+
+  public more(tags: RecommendationPayload): Observable<Recommendation[]> {
+    return this._http.post<Recommendation[]>(
+      `${this.url}/extend?type=album`,
+      tags,
+    );
+  }
 }
