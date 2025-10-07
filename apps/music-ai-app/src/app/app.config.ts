@@ -1,5 +1,4 @@
 import {
-  HTTP_INTERCEPTORS,
   provideHttpClient,
   withInterceptorsFromDi,
   withXsrfConfiguration,
@@ -16,7 +15,7 @@ import { APP_CONFIG } from '../environments/env';
 import { environment } from '../environments/environment';
 import { appRoutes } from './app.routes';
 import { MusicAppTheme } from './app.theme';
-import { CsrfInterceptor } from './interceptors/csrf.interceptor';
+import { provideHttpInterceptors } from './interceptors/interceptors.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +29,7 @@ export const appConfig: ApplicationConfig = {
       }),
       withInterceptorsFromDi(),
     ),
+    provideHttpInterceptors(),
     providePrimeNG({
       theme: {
         preset: MusicAppTheme,
@@ -37,6 +37,5 @@ export const appConfig: ApplicationConfig = {
     }),
     provideRouter(appRoutes),
     { provide: APP_CONFIG, useValue: environment },
-    { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true },
   ],
 };

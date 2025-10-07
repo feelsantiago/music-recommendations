@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { APP_CONFIG, Env } from '../../../environments/env';
+import { SKIP_LOADER } from '../../interceptors/context/loader.context';
 import { Session } from './auth.types';
 
 @Injectable({ providedIn: 'root' })
@@ -16,11 +17,8 @@ export class AuthApi {
   ) {}
 
   public session(): Observable<Session> {
-    return this._http.get<Session>(`${this._url}/session`);
-  }
-
-  // TODO: remove
-  public test(): Observable<void> {
-    return this._http.post<void>(`${this._url}/test`, {});
+    return this._http.get<Session>(`${this._url}/session`, {
+      ...SKIP_LOADER,
+    });
   }
 }

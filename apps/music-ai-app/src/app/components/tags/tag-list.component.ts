@@ -7,6 +7,10 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TagButtonComponent } from '@music-ai/components-ui';
+import { RxPush } from '@rx-angular/template/push';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { Observable } from 'rxjs';
+import { Loader } from '../../domain/loader/loader.service';
 import { Tags } from '../../domain/tags/tags.service';
 import { TagSelected } from '../../domain/tags/tags.types';
 import { TagComponent } from './tag.component';
@@ -24,11 +28,22 @@ type MaxTagList = number;
       <msc-ui-tag-button value="..." [severity]="'danger'" />
     }
 
-    <msc-ui-tag-button
-      icon="pi pi-plus"
-      [severity]="'contrast'"
-      (pressed)="selectTag.emit()"
-    />
+    @if (loading$ | push) {
+      <div class="card flex justify-center">
+        <p-progress-spinner
+          strokeWidth="6"
+          fill="transparent"
+          animationDuration=".5s"
+          [style]="{ width: '32px', height: '32px' }"
+        />
+      </div>
+    } @else {
+      <msc-ui-tag-button
+        icon="pi pi-plus"
+        [severity]="'contrast'"
+        (pressed)="selectTag.emit()"
+      />
+    }
   </div>`,
   styles: [
     `
@@ -37,7 +52,7 @@ type MaxTagList = number;
       }
     `,
   ],
-  imports: [TagComponent, TagButtonComponent],
+  imports: [TagComponent, TagButtonComponent, ProgressSpinner, RxPush],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagListComponent {
@@ -46,10 +61,15 @@ export class TagListComponent {
   public readonly tags: Signal<TagSelected[]>;
 
   public selectTag = output();
+  public loading$: Observable<boolean>;
 
-  constructor(private readonly _tags: Tags) {
+  constructor(
+    private readonly _tags: Tags,
+    private readonly _loader: Loader,
+  ) {
     this.selected = toSignal(this._tags.selected$, { initialValue: [] });
     this.tags = computed(() => this.selected().slice(0, this.max));
+    this.loading$ = this._loader.loading$;
   }
 
   public onTagChange(tag: TagSelected): void {
