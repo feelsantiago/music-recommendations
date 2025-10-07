@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import { APP_CONFIG } from '../environments/env';
 import { environment } from '../environments/environment';
@@ -37,5 +38,6 @@ export const appConfig: ApplicationConfig = {
     }),
     provideRouter(appRoutes),
     { provide: APP_CONFIG, useValue: environment },
+    { provide: MessageService, useClass: MessageService },
   ],
 };

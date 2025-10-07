@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Option } from '@music-ai/common';
 import { Recommendation, RecommendationTag } from '@music-ai/recommendations';
 import { rxState } from '@rx-angular/state';
 import {
+  catchError,
   combineLatest,
   filter,
   iif,
@@ -15,6 +16,7 @@ import {
   Subject,
   switchMap,
 } from 'rxjs';
+import { notifyError } from '../../helpers/http-error';
 import { Tags } from '../tags/tags.service';
 import { RecommendationsApi } from './recommendations.api';
 
@@ -44,6 +46,7 @@ export class Recommendations {
   constructor(
     private readonly _tags: Tags,
     private readonly _api: RecommendationsApi,
+    private readonly _injector: Injector,
   ) {
     const tags$ = this._tags.selected$.pipe(
       map((tags) => tags.map((tag) => tag.name)),
@@ -58,7 +61,12 @@ export class Recommendations {
       filter(([_, __, length]) => length > 0),
       filter(([_, index, length]) => index === length),
       map(([tags]) => tags.map((tag) => tag.name)),
-      switchMap((tags) => this._api.more({ tags })),
+      switchMap((tags) =>
+        this._api.more({ tags }).pipe(
+          notifyError(this._injector),
+          catchError(() => of([])),
+        ),
+      ),
       scan(
         (recommendations, next) => [...recommendations, ...next],
         <Recommendation[]>[],
@@ -94,11 +102,10 @@ export class Recommendations {
   }
 
   public fetch(tags: RecommendationTag[]): Observable<Recommendation[]> {
-    const fetch$ = this._api
-      .fetch({ tags })
-      .pipe
-      // TODO: catch rate limit errors
-      ();
+    const fetch$ = this._api.fetch({ tags }).pipe(
+      notifyError(this._injector),
+      catchError(() => of([])),
+    );
 
     return iif(() => tags.length === 0, of([]), fetch$);
   }

@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Toast } from 'primeng/toast';
 import { filter, Observable } from 'rxjs';
 import { Auth } from './domain/auth/auth.service';
 import { FooterComponent } from './layout/footer.component';
@@ -9,6 +10,7 @@ import { HeaderComponent } from './layout/header.component';
 @Component({
   selector: 'msc-root',
   template: `
+    <p-toast />
     @if (csrf$ | async) {
       <msc-header></msc-header>
       <div class="p-8">
@@ -24,7 +26,7 @@ import { HeaderComponent } from './layout/header.component';
       }
     `,
   ],
-  imports: [RouterModule, HeaderComponent, FooterComponent, AsyncPipe],
+  imports: [RouterModule, HeaderComponent, FooterComponent, AsyncPipe, Toast],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {

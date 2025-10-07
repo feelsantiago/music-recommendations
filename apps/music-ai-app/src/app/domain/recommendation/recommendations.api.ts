@@ -6,6 +6,7 @@ import {
 } from '@music-ai/recommendations';
 import { Observable } from 'rxjs';
 import { APP_CONFIG, Env } from '../../../environments/env';
+import { toAppError } from '../../helpers/http-error';
 
 @Injectable({ providedIn: 'root' })
 export class RecommendationsApi {
@@ -19,13 +20,14 @@ export class RecommendationsApi {
   ) {}
 
   public fetch(tags: RecommendationPayload): Observable<Recommendation[]> {
-    return this._http.post<Recommendation[]>(`${this.url}?type=album`, tags);
+    return this._http
+      .post<Recommendation[]>(`${this.url}?type=album`, tags)
+      .pipe(toAppError());
   }
 
   public more(tags: RecommendationPayload): Observable<Recommendation[]> {
-    return this._http.post<Recommendation[]>(
-      `${this.url}/extend?type=album`,
-      tags,
-    );
+    return this._http
+      .post<Recommendation[]>(`${this.url}/extend?type=album`, tags)
+      .pipe(toAppError());
   }
 }
