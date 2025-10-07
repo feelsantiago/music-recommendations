@@ -9,7 +9,7 @@ interface LoaderState {
 export class Loader {
   private _state = rxState<LoaderState>(({ set }) => set({ pending: 0 }));
 
-  public loading$ = this._state.select('pending', (perding) => perding > 0);
+  public loading$ = this._state.select('pending', (pending) => pending > 0);
   public pending$ = this._state.select('pending');
 
   public start(): void {
