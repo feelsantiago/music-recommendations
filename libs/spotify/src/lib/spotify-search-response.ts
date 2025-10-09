@@ -1,5 +1,5 @@
 import { Option, Result } from '@music-ai/common';
-import { Recommendation, RecommendationData } from '@music-ai/recommendations';
+import { Recommendation } from '@music-ai/recommendations';
 import z from 'zod';
 import { SpotifyError } from './spotify.errors';
 
@@ -34,12 +34,12 @@ export class SpotifySearchResponse {
   });
 
   private constructor(
-    public readonly recommendation: RecommendationData,
+    private readonly _recommendation: Recommendation,
     public readonly data: SpotifySearchResponsePayload,
   ) {}
 
   public static create(
-    recommendation: RecommendationData,
+    recommendation: Recommendation,
     payload: SpotifySearchResponsePayload,
   ): Result<SpotifySearchResponse, SpotifyError> {
     return Result.from<SpotifySearchResponsePayload, SpotifyError>(() =>
@@ -49,9 +49,7 @@ export class SpotifySearchResponse {
       .mapErr((error) => SpotifyError.search(error, { metadata: payload }));
   }
 
-  public static empty(
-    recommendation: RecommendationData,
-  ): SpotifySearchResponse {
+  public static empty(recommendation: Recommendation): SpotifySearchResponse {
     return new SpotifySearchResponse(recommendation, {
       albums: {
         items: [
@@ -66,20 +64,23 @@ export class SpotifySearchResponse {
     });
   }
 
-  public streaming(): Recommendation['streaming'] {
+  public recommendation(): Recommendation {
     if (this.data.albums.items.length === 0) {
-      return [];
+      return { ...this._recommendation, metadata: [] };
     }
 
     const items = this.data.albums.items[0];
     const images = items.images.map((image) => image.url);
 
-    return [
-      {
-        name: 'spotify',
-        cover: Option.from(images[0]).unwrapOr(''),
-        url: items.external_urls.spotify,
-      },
-    ];
+    return {
+      ...this._recommendation,
+      metadata: [
+        {
+          name: 'spotify',
+          cover: Option.from(images[0]).unwrapOr(''),
+          url: items.external_urls.spotify,
+        },
+      ],
+    };
   }
 }

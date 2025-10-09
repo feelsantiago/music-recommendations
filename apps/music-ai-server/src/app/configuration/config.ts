@@ -79,4 +79,16 @@ export class Config {
       'text-bison-001',
     );
   }
+
+  public spotifyClientId(): string {
+    return Option.from(() =>
+      this._config.get<string>('SPOTIFY_CLIENT_ID'),
+    ).unwrapOr('');
+  }
+
+  public spotifyClientSecret(): string {
+    return Option.from(() =>
+      this._config.get<string>('SPOTIFY_CLIENT_SECRET'),
+    ).unwrapOr('');
+  }
 }

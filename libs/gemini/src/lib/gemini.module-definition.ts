@@ -4,6 +4,10 @@ export interface GeminiModuleOptions {
   apiKey: string;
   recommendations: number;
   model: string;
+  spotify: {
+    clientId: string;
+    clientSecret: string;
+  };
 }
 
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =

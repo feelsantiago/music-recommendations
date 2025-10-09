@@ -1,6 +1,9 @@
-import { GenerateContentResponse } from '@google/genai';
+import { GenerateContentResponse, Type } from '@google/genai';
 import { Option, Result } from '@music-ai/common';
-import { RecommendationHistory } from '@music-ai/recommendations';
+import {
+  Recommendation,
+  RecommendationHistory,
+} from '@music-ai/recommendations';
 import { GeminiError } from '../gemini.errors';
 
 interface TokenCount {
@@ -16,6 +19,20 @@ const EMPTY_METADATA = {
   totalTokenCount: 0,
   thoughtsTokenCount: 0,
 };
+
+export const PROMPT_SCHEMA = {
+  type: Type.ARRAY,
+  items: {
+    type: Type.OBJECT,
+    properties: {
+      name: { type: Type.STRING },
+      artist: { type: Type.STRING },
+    },
+    propertyOrdering: ['name', 'artist'],
+  },
+};
+
+export type PromptSchema = Omit<Recommendation, 'metadata'>;
 
 export class PromptResponse {
   constructor(
@@ -47,7 +64,7 @@ export class PromptResponse {
     );
   }
 
-  public data<T>(): Result<T, GeminiError> {
+  public data(): Result<PromptSchema[], GeminiError> {
     return this.text
       .okOr(GeminiError.empty())
       .inspect((data) =>
@@ -58,6 +75,6 @@ export class PromptResponse {
           GeminiError.parse({ metadata: { text } }),
         ),
       )
-      .map((data) => data as T);
+      .map((data) => data as PromptSchema[]);
   }
 }

@@ -6,35 +6,25 @@ import {
   safeTryBind,
   some,
 } from '@music-ai/common';
-import {
-  RecommendationData,
-  Recommendations,
-  RecommendationStreaming,
-  RecommendationStreamingError,
-} from '@music-ai/recommendations';
+import { Recommendation } from '@music-ai/recommendations';
 import { Injectable } from '@nestjs/common';
 import { SpotifyToken } from './spotify-token';
 import { SpotifyApi } from './spotify.api';
 import { SpotifyError } from './spotify.errors';
 
 @Injectable()
-export class Spotify implements RecommendationStreaming {
+export class Spotify {
   private _token: Option<SpotifyToken> = none;
 
   constructor(private readonly _api: SpotifyApi) {}
 
-  public metadata(
-    recommendations: RecommendationData[],
-  ): ResultAsync<Recommendations[], RecommendationStreamingError> {
-    return safeTryBind(this, async function* ({ $async }) {
+  public async metadata(
+    recommendations: Recommendation[],
+  ): ResultAsync<Recommendation[], SpotifyError> {
+    return await safeTryBind(this, async function* ({ $async }) {
       const token = yield* $async(this.token());
-      const metadata = yield* $async(this._api.search(recommendations, token));
-      const data = metadata.map((payload) => ({
-        ...payload.streaming(),
-        ...payload.recommendation,
-      }));
-
-      return ok(data);
+      const search = yield* $async(this._api.search(recommendations, token));
+      return ok(search.map((response) => response.recommendation()));
     });
   }
 
