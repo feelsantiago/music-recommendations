@@ -24,10 +24,4 @@ export class RecommendationsApi {
       .post<Recommendation[]>(`${this.url}?type=album`, tags)
       .pipe(toAppError());
   }
-
-  public more(tags: RecommendationPayload): Observable<Recommendation[]> {
-    return this._http
-      .post<Recommendation[]>(`${this.url}/extend?type=album`, tags)
-      .pipe(toAppError());
-  }
 }

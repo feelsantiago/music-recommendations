@@ -1,7 +1,14 @@
 export interface Recommendation {
-  album: string;
+  name: string;
   artist: string;
+  streaming: {
+    cover: string;
+    url: string;
+    name: string;
+  }[];
 }
+
+export type RecommendationData = Omit<Recommendation, 'streaming'>;
 
 export interface RecommendationHistory {
   role: 'user' | 'model';
@@ -10,7 +17,7 @@ export interface RecommendationHistory {
 
 export interface RecommendationResponse {
   id: string;
-  recommendations: Recommendation[];
+  recommendations: RecommendationData[];
   metadata: {
     tokens: number;
     history: RecommendationHistory[];

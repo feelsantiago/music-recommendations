@@ -33,18 +33,7 @@ export class RecommendationController {
   @Post()
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(RecommendationResultInterceptor)
-  public async generate(
-    @Body() body: RecommendationDto,
-    @Query('type', RecommendationTypePipe) type: RecommendationType,
-  ): ResultAsync<RecommendationResponse, RecommendationError> {
-    const tags = body.tags.map((tag) => tag.value);
-    return this._recommendations.generate(type, tags);
-  }
-
-  @Post('extend')
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(RecommendationResultInterceptor)
-  public async extend(
+  public async fetch(
     @Body() body: RecommendationDto,
     @Query('type', RecommendationTypePipe) type: RecommendationType,
     @Session() session: Record<string, unknown>,

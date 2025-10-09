@@ -62,7 +62,7 @@ export class Recommendations {
       filter(([_, index, length]) => index === length),
       map(([tags]) => tags.map((tag) => tag.name)),
       switchMap((tags) =>
-        this._api.more({ tags }).pipe(
+        this._api.fetch({ tags }).pipe(
           notifyError(this._injector),
           catchError(() => of([])),
         ),

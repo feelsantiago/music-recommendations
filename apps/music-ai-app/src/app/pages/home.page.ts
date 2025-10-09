@@ -14,6 +14,7 @@ import { TagListComponent } from '../components/tags/tag-list.component';
     <div class="max-w-120 mx-auto">
       <msc-tag-drawer [(open)]="drawer" />
       <msc-recommendation-type />
+      <div class="mt-10"></div>
       <msc-recommendation />
       <div class="mt-10">
         <msc-tag-list (selectTag)="onOpenDrawer()" />

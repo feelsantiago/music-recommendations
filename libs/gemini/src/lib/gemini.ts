@@ -1,6 +1,6 @@
 import { ResultAsync, safeTryBind } from '@music-ai/common';
 import {
-  Recommendation,
+  RecommendationData,
   RecommendationError,
   RecommendationHistory,
   RecommendationResponse,
@@ -29,7 +29,7 @@ export class Gemini implements Recommendations {
         .otherwise(() => this._prompt.generate(type, tags));
       const response = yield* $async(request);
 
-      return response.data<Recommendation[]>().map((recommendations) => ({
+      return response.data<RecommendationData[]>().map((recommendations) => ({
         id: response.id,
         recommendations,
         metadata: { tokens: response.tokens.total, history: response.history },

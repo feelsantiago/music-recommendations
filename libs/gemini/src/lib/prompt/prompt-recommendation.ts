@@ -21,10 +21,10 @@ export const PROMPT_SCHEMA = {
   items: {
     type: Type.OBJECT,
     properties: {
-      album: { type: Type.STRING },
+      name: { type: Type.STRING },
       artist: { type: Type.STRING },
     },
-    propertyOrdering: ['album', 'artist'],
+    propertyOrdering: ['name', 'artist'],
   },
 };
 
