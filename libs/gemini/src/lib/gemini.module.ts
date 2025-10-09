@@ -14,8 +14,8 @@ import { PromptRecommendation } from './prompt/prompt-recommendation';
 @Module({
   imports: [
     SpotifyModule.register({
-      clientId: '72f4c122b8f14f08abe7f5097ec7a1a4',
-      clientSecret: 'aa3df1f48fc749e796f10188bf48f641',
+      clientId: '',
+      clientSecret: '',
     }),
   ],
   providers: [
