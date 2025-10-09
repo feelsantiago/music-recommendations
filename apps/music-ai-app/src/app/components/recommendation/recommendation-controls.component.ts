@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { none, Option } from '@music-ai/common';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { Option } from '@music-ai/common';
 import { Recommendation } from '@music-ai/recommendations';
 import { RxPush } from '@rx-angular/template/push';
 import { ButtonModule } from 'primeng/button';
@@ -19,9 +20,16 @@ import { Recommendations } from '../../domain/recommendation/recommendations.ser
       ></p-button>
     </ng-template>
     <ng-template #center>
-      <p-button severity="secondary" [disabled]="current$ | push">
+      <a
+        pButton
+        [ngClass]="{ 'p-disabled': current$ | push }"
+        [href]="spotify()"
+        severity="secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <img src="spotify.png" alt="spotify logo" />
-      </p-button>
+      </a>
     </ng-template>
     <ng-template #end>
       <p-button
@@ -32,15 +40,14 @@ import { Recommendations } from '../../domain/recommendation/recommendations.ser
       ></p-button>
     </ng-template>
   </p-toolbar>`,
-  imports: [Toolbar, ButtonModule, RxPush],
+  imports: [CommonModule, Toolbar, ButtonModule, RxPush],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommnedationControlsComponent {
   public prevDisabled$: Observable<boolean>;
   public nextDisabled$: Observable<boolean>;
   public current$: Observable<boolean>;
-
-  private _current: Option<Recommendation> = none;
+  public spotify = signal('');
 
   constructor(private readonly _recommendations: Recommendations) {
     this.prevDisabled$ = this._recommendations.index$.pipe(
@@ -54,9 +61,8 @@ export class RecommnedationControlsComponent {
 
     this.current$ = this._recommendations.current$.pipe(
       map((current) => {
-        return (this._current = current);
+        return !this._spotify(current);
       }),
-      map((current) => current.isNone()),
     );
   }
 
@@ -66,5 +72,19 @@ export class RecommnedationControlsComponent {
 
   public onPrev(): void {
     this._recommendations.prev();
+  }
+
+  public _spotify(current: Option<Recommendation>): boolean {
+    return current.match({
+      none: () => false,
+      some: (recommendation) =>
+        Option.from(recommendation.metadata[0])
+          .inspect((r) => {
+            console.log('OXE');
+            this.spotify.set(r.url);
+          })
+          .map((r) => r.name === 'spotify')
+          .isSome(),
+    });
   }
 }

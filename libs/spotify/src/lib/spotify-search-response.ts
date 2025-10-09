@@ -1,5 +1,5 @@
-import { Option, Result } from '@music-ai/common';
-import { Recommendation } from '@music-ai/recommendations';
+import { Result } from '@music-ai/common';
+import { Recommendation, RecommendationCover } from '@music-ai/recommendations';
 import z from 'zod';
 import { SpotifyError } from './spotify.errors';
 
@@ -70,14 +70,13 @@ export class SpotifySearchResponse {
     }
 
     const items = this.data.albums.items[0];
-    const images = items.images.map((image) => image.url);
 
     return {
       ...this._recommendation,
       metadata: [
         {
           name: 'spotify',
-          cover: Option.from(images[0]).unwrapOr(''),
+          images: items.images as RecommendationCover[],
           url: items.external_urls.spotify,
         },
       ],

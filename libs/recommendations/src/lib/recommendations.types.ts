@@ -1,10 +1,16 @@
+export interface RecommendationCover {
+  url: string;
+  height: number;
+  width: number;
+}
+
 export interface Recommendation {
   name: string;
   artist: string;
   metadata: {
-    cover: string;
     url: string;
     name: string;
+    images: RecommendationCover[];
   }[];
 }
 

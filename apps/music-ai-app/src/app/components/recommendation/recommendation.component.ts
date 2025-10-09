@@ -24,7 +24,7 @@ import {
     <msc-ui-slider (slideChanged)="onSlideChange($event)">
       @for (
         recommendation of recommendations();
-        track recommendation.album;
+        track recommendation.name;
         let i = $index
       ) {
         <msc-recommendation-item

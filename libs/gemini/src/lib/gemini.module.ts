@@ -13,12 +13,9 @@ import { PromptRecommendation } from './prompt/prompt-recommendation';
 
 @Module({
   imports: [
-    SpotifyModule.registerAsync({
-      inject: [MODULE_OPTIONS_TOKEN],
-      useFactory: (options: GeminiModuleOptions) => ({
-        clientId: options.spotify.clientId,
-        clientSecret: options.spotify.clientSecret,
-      }),
+    SpotifyModule.register({
+      clientId: '72f4c122b8f14f08abe7f5097ec7a1a4',
+      clientSecret: 'aa3df1f48fc749e796f10188bf48f641',
     }),
   ],
   providers: [

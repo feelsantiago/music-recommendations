@@ -1,5 +1,5 @@
 import { err, ok, Result, ResultAsync } from '@music-ai/common';
-import { RecommendationData } from '@music-ai/recommendations';
+import { Recommendation } from '@music-ai/recommendations';
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
 import {
@@ -35,11 +35,7 @@ export class SpotifyApi {
   ) {}
 
   public async token(): ResultAsync<SpotifyToken, SpotifyError> {
-    const form = new FormData();
-
-    form.append('grant_type', 'client_credentials');
-    form.append('client_id', this._options.clientId);
-    form.append('client_secret', this._options.clientSecret);
+    const form = `grant_type=client_credentials&client_id=${this._options.clientId}&client_secret=${this._options.clientSecret}`;
 
     const request = this._http
       .post<SpotifyTokenPayload>(`${this._accounts}/token`, form, {
@@ -56,7 +52,7 @@ export class SpotifyApi {
   }
 
   public async search(
-    recommendations: RecommendationData[],
+    recommendations: Recommendation[],
     token: SpotifyToken,
   ): ResultAsync<SpotifySearchResponse[], SpotifyError> {
     const request = from(recommendations).pipe(

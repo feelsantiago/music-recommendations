@@ -1,9 +1,5 @@
 import { Gemini, GeminiModule } from '@music-ai/gemini';
-import {
-  Recommendations,
-  RecommendationStreaming,
-} from '@music-ai/recommendations';
-import { Spotify, SpotifyModule } from '@music-ai/spotify';
+import { Recommendations } from '@music-ai/recommendations';
 import { Module } from '@nestjs/common';
 import { Config } from '../../configuration/config';
 import { ConfigurationModule } from '../../configuration/configuration.module';
@@ -19,14 +15,10 @@ import { RecommendationController } from './recommendation.controller';
         apiKey: config.aiKey(),
         recommendations: config.recommendationLength(),
         model: config.model(),
-      }),
-    }),
-    SpotifyModule.registerAsync({
-      imports: [ConfigurationModule],
-      inject: [Config],
-      useFactory: (config: Config) => ({
-        clientId: config.spotifyClientId(),
-        clientSecret: config.spotifyClientSecret(),
+        spotify: {
+          clientId: config.spotifyClientId(),
+          clientSecret: config.spotifyClientSecret(),
+        },
       }),
     }),
   ],
@@ -34,11 +26,8 @@ import { RecommendationController } from './recommendation.controller';
   providers: [
     {
       provide: Recommendations,
-      useClass: Gemini,
-    },
-    {
-      provide: RecommendationStreaming,
-      useClass: Spotify,
+      useFactory: (gemini: Gemini) => gemini,
+      inject: [Gemini],
     },
     RecommendationRateLimits,
   ],

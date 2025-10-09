@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { Recommendation } from '@music-ai/recommendations';
+import { NgOptimizedImage } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  Signal,
+} from '@angular/core';
+import { Option } from '@music-ai/common';
+import { Recommendation, RecommendationCover } from '@music-ai/recommendations';
 import { Skeleton } from 'primeng/skeleton';
 
 @Component({
@@ -17,13 +25,27 @@ export class RecommendationEmptyItemComponent {}
 @Component({
   selector: 'msc-recommendation-item',
   template: `<div class="h-90 flex flex-col justify-end items-center">
-    <p-skeleton height="640px" width="640"></p-skeleton>
-    <p class="mt-4">{{ item().album }}</p>
+    @for (img of cover(); track img.height) {
+      <img [ngSrc]="img.url" width="300" height="300" />
+    } @empty {
+      <p-skeleton height="300px" width="300px"></p-skeleton>
+    }
+    <p class="mt-4">{{ item().name }}</p>
     <p class="mt-1">{{ item().artist }}</p>
   </div>`,
-  imports: [Skeleton],
+  imports: [Skeleton, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationItemComponent {
   public readonly item = input.required<Recommendation>();
+  public cover: Signal<RecommendationCover[]>;
+
+  constructor() {
+    this.cover = computed(() => {
+      const item = this.item();
+      const metadata = Option.from(item.metadata[0]);
+      const images = metadata.map((m) => m.images).unwrapOr([]);
+      return images.filter((img) => img.height === 300);
+    });
+  }
 }
