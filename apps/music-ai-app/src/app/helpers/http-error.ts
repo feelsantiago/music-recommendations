@@ -18,15 +18,23 @@ export function toAppError<T>(): MonoTypeOperatorFunction<T> {
         const name = Option.from(error.error.type);
 
         return throwError(() =>
-          AppError.create(message.unwrapOr(error.message), {
-            name: name.unwrapOr(error.name),
-            source: error,
-          }),
+          AppError.create(
+            message.unwrapOr(
+              'Recommendations are unavailable at the moment! Please try again later...',
+            ),
+            {
+              name: name.unwrapOr('Unexpected Error'),
+              source: error,
+            },
+          ),
         );
       }
 
       return throwError(() =>
-        AppError.create('Unknow error', { source: error }),
+        AppError.create(
+          'Recommendations are unavailable at the moment! Please try again later...',
+          { source: error },
+        ),
       );
     }),
   );

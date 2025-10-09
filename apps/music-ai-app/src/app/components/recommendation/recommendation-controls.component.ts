@@ -80,7 +80,6 @@ export class RecommnedationControlsComponent {
       some: (recommendation) =>
         Option.from(recommendation.metadata[0])
           .inspect((r) => {
-            console.log('OXE');
             this.spotify.set(r.url);
           })
           .map((r) => r.name === 'spotify')
