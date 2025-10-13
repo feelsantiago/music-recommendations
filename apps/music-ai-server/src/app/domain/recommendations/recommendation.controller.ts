@@ -14,11 +14,10 @@ import {
   HttpStatus,
   Post,
   Query,
-  Session,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { match, P } from 'ts-pattern';
+import { History } from './decorators/history.decorator';
 import { RecommendationDto } from './dtos/recommendation.dto';
 import { RecommendationTypePipe } from './pipes/recommendation-type.pipe';
 import { RecommendationRateLimitGuard } from './rate-limits/recommendation-rate-limit.guard';
@@ -40,17 +39,9 @@ export class RecommendationController {
   public async fetch(
     @Body() body: RecommendationDto,
     @Query('type', RecommendationTypePipe) type: RecommendationType,
-    @Session() session: Record<string, unknown>,
+    @History() history: RecommendationHistory[],
   ): ResultAsync<RecommendationResponse, RecommendationError> {
-    const history = match(session.history)
-      .with(
-        P.array({ role: P.any }),
-        () => session.history as RecommendationHistory[],
-      )
-      .otherwise(() => []);
-
     const tags = body.tags.map((tag) => tag.value);
-
     return safeTryBind(this, async function* ({ $async }) {
       const data = yield* $async(
         this._recommendations.generate(type, tags, history),
