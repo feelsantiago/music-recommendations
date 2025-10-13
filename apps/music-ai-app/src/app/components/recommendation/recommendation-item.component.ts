@@ -13,7 +13,7 @@ import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'msc-recommendation-empty-item',
   template: `<div class="h-90 flex flex-col justify-end items-center">
-    <p-skeleton height="300px" width="300px"></p-skeleton>
+    <p-skeleton height="280px" width="280px"></p-skeleton>
     <p-skeleton class="mt-4" width="10rem"></p-skeleton>
     <p-skeleton class="m-2" width="5rem"></p-skeleton>
   </div>`,
@@ -26,7 +26,7 @@ export class RecommendationEmptyItemComponent {}
   selector: 'msc-recommendation-item',
   template: `<div class="h-90 flex flex-col justify-end items-center">
     @for (img of cover(); track img.height) {
-      <img [ngSrc]="img.url" width="300" height="300" />
+      <img class="rounded-sm" [ngSrc]="img.url" width="280" height="280" />
     } @empty {
       <p-skeleton height="300px" width="300px"></p-skeleton>
     }

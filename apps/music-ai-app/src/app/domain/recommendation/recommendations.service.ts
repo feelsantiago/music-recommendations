@@ -17,6 +17,7 @@ import {
   switchMap,
 } from 'rxjs';
 import { notifyError } from '../../helpers/http-error';
+import { Settings } from '../settings/settings.service';
 import { Tags } from '../tags/tags.service';
 import { RecommendationsApi } from './recommendations.api';
 
@@ -46,6 +47,7 @@ export class Recommendations {
   constructor(
     private readonly _tags: Tags,
     private readonly _api: RecommendationsApi,
+    private readonly _settings: Settings,
     private readonly _injector: Injector,
   ) {
     const tags$ = this._tags.selected$.pipe(
@@ -54,13 +56,15 @@ export class Recommendations {
     );
 
     const next$ = combineLatest([
+      this._settings.autoFetch$,
       this._tags.selected$,
       this.index$,
       this.length$,
     ]).pipe(
-      filter(([_, __, length]) => length > 0),
-      filter(([_, index, length]) => index === length),
-      map(([tags]) => tags.map((tag) => tag.name)),
+      filter(([autoFetch]) => autoFetch),
+      filter(([_, __, ___, length]) => length > 0),
+      filter(([_, __, index, length]) => index === length),
+      map(([_, tags]) => tags.map((tag) => tag.name)),
       switchMap((tags) =>
         this._api.fetch({ tags }).pipe(
           notifyError(this._injector),
