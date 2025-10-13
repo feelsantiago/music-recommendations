@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Toolbar } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { Toolbar } from 'primeng/toolbar';
 
 @Component({
   selector: 'msc-header',
@@ -18,7 +18,17 @@ import { CardModule } from 'primeng/card';
         </ng-template>
         <ng-template #end>
           <a
-            href="https://github.com/feels/music-ai"
+            class="mr-2"
+            href="https://x.com/feelssantiago"
+            pButton
+            target="_blank"
+            severity="secondary"
+            rel="noopener noreferrer"
+          >
+            <i class="pi pi-twitter"></i>
+          </a>
+          <a
+            href="https://github.com/feelsantiago/music-recommendations"
             pButton
             target="_blank"
             severity="secondary"
