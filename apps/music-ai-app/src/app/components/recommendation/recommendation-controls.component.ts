@@ -28,7 +28,7 @@ import { Recommendations } from '../../domain/recommendation/recommendations.ser
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img src="spotify.png" alt="spotify logo" />
+        <img src="icons/spotify.png" alt="spotify logo" />
       </a>
     </ng-template>
     <ng-template #end>
