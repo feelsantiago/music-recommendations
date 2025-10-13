@@ -2,7 +2,8 @@ import { AppError, AppErrorOptions } from '@music-ai/common';
 
 export type RecommendationErrorName =
   | 'recommendation_generation'
-  | 'invalid_recommendation';
+  | 'invalid_recommendation'
+  | 'empty_music_metadata';
 
 export class RecommendationError extends AppError {
   private constructor(
@@ -34,6 +35,20 @@ export class RecommendationError extends AppError {
     return new RecommendationError(
       'invalid_recommendation',
       '[Recommendation] - Invalid recommendation data',
+      {
+        ...options,
+        source,
+      },
+    );
+  }
+
+  public static metadata(
+    source: AppError,
+    options: Omit<AppErrorOptions, 'name' | 'source'> = {},
+  ): RecommendationError {
+    return new RecommendationError(
+      'empty_music_metadata',
+      '[Recommendation] - Empty music metadata',
       {
         ...options,
         source,

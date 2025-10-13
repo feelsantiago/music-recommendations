@@ -5,8 +5,7 @@ export type GeminiErrorName =
   | 'prompt_generation'
   | 'empty_prompt'
   | 'parse_prompt_response'
-  | 'empty_tags'
-  | 'recommendation_metadata';
+  | 'empty_tags';
 
 export class GeminiError extends AppError {
   private constructor(
@@ -55,20 +54,6 @@ export class GeminiError extends AppError {
     return new GeminiError(
       'empty_tags',
       '[Prompt - Response] - No tags provided',
-      {
-        ...options,
-        source,
-      },
-    );
-  }
-
-  public static metadata(
-    source: AppError,
-    options: Omit<AppErrorOptions, 'name'> = {},
-  ): GeminiError {
-    return new GeminiError(
-      'recommendation_metadata',
-      '[Recommendation] - Unable to fetch recommendation metadata',
       {
         ...options,
         source,

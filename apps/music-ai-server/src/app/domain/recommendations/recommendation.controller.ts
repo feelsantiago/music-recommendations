@@ -1,9 +1,10 @@
-import { ResultAsync } from '@music-ai/common';
+import { ResultAsync, safeTryBind } from '@music-ai/common';
 import {
   RecommendationError,
   RecommendationHistory,
   RecommendationResponse,
   Recommendations,
+  RecommendationsMetadata,
   RecommendationType,
 } from '@music-ai/recommendations';
 import {
@@ -28,7 +29,10 @@ import { RecommendationResultInterceptor } from './recommendation-result.interce
 @UseGuards(RecommendationRateLimitGuard)
 @Controller('recommendations')
 export class RecommendationController {
-  constructor(private readonly _recommendations: Recommendations) {}
+  constructor(
+    private readonly _recommendations: Recommendations,
+    private readonly _metadata: RecommendationsMetadata,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.OK)
@@ -46,6 +50,14 @@ export class RecommendationController {
       .otherwise(() => []);
 
     const tags = body.tags.map((tag) => tag.value);
-    return this._recommendations.generate(type, tags, history);
+
+    return safeTryBind(this, async function* ({ $async }) {
+      const data = yield* $async(
+        this._recommendations.generate(type, tags, history),
+      );
+
+      const metadata = await this._metadata.fetch(data.recommendations);
+      return metadata.map((recommendations) => ({ ...data, recommendations }));
+    });
   }
 }

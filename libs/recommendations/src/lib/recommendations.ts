@@ -1,6 +1,7 @@
 import { ResultAsync } from '@music-ai/common';
 import { RecommendationError } from './recommendations.errors';
 import {
+  Recommendation,
   RecommendationHistory,
   RecommendationResponse,
   RecommendationsLimits,
@@ -16,4 +17,10 @@ export abstract class Recommendations {
   ): ResultAsync<RecommendationResponse, RecommendationError>;
 
   public abstract limits(): RecommendationsLimits;
+}
+
+export abstract class RecommendationsMetadata {
+  public abstract fetch(
+    recommendations: Recommendation[],
+  ): ResultAsync<Recommendation[], RecommendationError>;
 }

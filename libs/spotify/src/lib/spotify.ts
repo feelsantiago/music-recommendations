@@ -6,26 +6,35 @@ import {
   safeTryBind,
   some,
 } from '@music-ai/common';
-import { Recommendation } from '@music-ai/recommendations';
+import {
+  Recommendation,
+  RecommendationError,
+  RecommendationsMetadata,
+} from '@music-ai/recommendations';
 import { Injectable } from '@nestjs/common';
+import { match, P } from 'ts-pattern';
 import { SpotifyToken } from './spotify-token';
 import { SpotifyApi } from './spotify.api';
 import { SpotifyError } from './spotify.errors';
 
 @Injectable()
-export class Spotify {
+export class Spotify implements RecommendationsMetadata {
   private _token: Option<SpotifyToken> = none;
 
   constructor(private readonly _api: SpotifyApi) {}
 
-  public async metadata(
+  public async fetch(
     recommendations: Recommendation[],
-  ): ResultAsync<Recommendation[], SpotifyError> {
-    return await safeTryBind(this, async function* ({ $async }) {
+  ): ResultAsync<Recommendation[], RecommendationError> {
+    const result = await safeTryBind(this, async function* ({ $async }) {
       const token = yield* $async(this.token());
       const search = yield* $async(this._api.search(recommendations, token));
-      return ok(search.map((response) => response.recommendation()));
+      return ok<Recommendation[], SpotifyError>(
+        search.map((response) => response.recommendation()),
+      );
     });
+
+    return result.mapErr((error) => this._error(error));
   }
 
   public async token(): ResultAsync<SpotifyToken, SpotifyError> {
@@ -37,5 +46,14 @@ export class Spotify {
     }
 
     return ok(this._token.unwrap());
+  }
+
+  private _error(error: SpotifyError): RecommendationError {
+    return match(error.type)
+      .with(
+        P.union('search_error', 'fetch_token_error', 'invalid_token_payload'),
+        () => RecommendationError.metadata(error),
+      )
+      .exhaustive();
   }
 }
