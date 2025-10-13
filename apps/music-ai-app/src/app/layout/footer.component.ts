@@ -16,7 +16,7 @@ interface FooterLink {
   template: `
     @let data = icon();
     <a
-      class="mr-2 min-h-[42px]"
+      class="mr-2 min-h-[44px]"
       pButton
       [href]="data.url"
       target="_blank"
