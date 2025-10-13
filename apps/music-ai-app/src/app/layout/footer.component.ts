@@ -48,6 +48,13 @@ export class FooterIconLink {
       </div>
     </div>
   </p-card>`,
+  styles: [
+    `
+      :host ::ng-deep .p-card-body {
+        padding-top: 5px !important;
+      }
+    `,
+  ],
   imports: [CardModule, FooterIconLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

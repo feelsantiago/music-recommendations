@@ -12,11 +12,15 @@ import { HeaderComponent } from './layout/header.component';
   template: `
     <p-toast />
     @if (csrf$ | async) {
-      <msc-header></msc-header>
-      <div class="p-8">
-        <router-outlet></router-outlet>
+      <div class="flex flex-col min-h-screen justify-between">
+        <div>
+          <msc-header></msc-header>
+          <div class="p-8">
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+        <msc-footer class=""></msc-footer>
       </div>
-      <msc-footer class="absolute bottom-0 w-full"></msc-footer>
     }
   `,
   styles: [
