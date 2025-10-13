@@ -14,12 +14,12 @@ import { HeaderComponent } from './layout/header.component';
     @if (csrf$ | async) {
       <div class="flex flex-col min-h-screen justify-between">
         <div>
-          <msc-header></msc-header>
+          <msc-header />
           <div class="p-8">
-            <router-outlet></router-outlet>
+            <router-outlet />
           </div>
         </div>
-        <msc-footer class=""></msc-footer>
+        <msc-footer />
       </div>
     }
   `,
