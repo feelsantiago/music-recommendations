@@ -55,16 +55,16 @@ export class Recommendations {
       switchMap((tags) => merge(of([]), this.fetch(tags))),
     );
 
-    const next$ = combineLatest([
-      this._settings.autoFetch$,
-      this._tags.selected$,
-      this.index$,
-      this.length$,
-    ]).pipe(
-      filter(([autoFetch]) => autoFetch),
-      filter(([_, __, ___, length]) => length > 0),
-      filter(([_, __, index, length]) => index === length),
-      map(([_, tags]) => tags.map((tag) => tag.name)),
+    const next$ = combineLatest({
+      autoFetch: this._settings.autoFetch$,
+      tags: this._tags.selected$,
+      index: this.index$,
+      length: this.length$,
+    }).pipe(
+      filter(({ autoFetch }) => autoFetch),
+      filter(({ length }) => length > 0),
+      filter(({ index, length }) => index === length),
+      map(({ tags }) => tags.map((tag) => tag.name)),
       switchMap((tags) =>
         this._api.fetch({ tags }).pipe(
           notifyError(this._injector),
