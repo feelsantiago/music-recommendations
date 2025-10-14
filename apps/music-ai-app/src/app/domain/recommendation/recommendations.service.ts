@@ -41,7 +41,7 @@ export class Recommendations {
   private readonly _controller$ = new Subject<'next' | 'prev'>();
 
   public recommendations$ = this._state.select('recommendations');
-  public type = this._state.select('type');
+  public type$ = this._state.select('type');
   public current$ = this._state.select(
     ['recommendations', 'current'],
     ({ recommendations, current }) => Option.from(recommendations[current]),
@@ -110,6 +110,10 @@ export class Recommendations {
 
   public current(index: number): void {
     this._state.set('current', () => index);
+  }
+
+  public type(type: RecommendationType): void {
+    this._state.set('type', () => type);
   }
 
   public fetch(tags: RecommendationTag[]): Observable<Recommendation[]> {

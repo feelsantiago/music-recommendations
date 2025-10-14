@@ -1,26 +1,30 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { SelectButton } from 'primeng/selectbutton';
+import { RecommendationType } from '@music-ai/recommendations';
+import { SelectButton, SelectButtonChangeEvent } from 'primeng/selectbutton';
+import { Recommendations } from '../../domain/recommendation/recommendations.service';
 
 @Component({
   selector: 'msc-recommendation-type',
   template: `<div class="flex justify-center items-center">
     <p-selectbutton
       [options]="options"
-      [(ngModel)]="selected"
+      [ngModel]="selected()"
       [unselectable]="true"
       optionLabel="label"
       optionValue="value"
+      (onChange)="onTypeChange($event)"
     ></p-selectbutton>
   </div>`,
   imports: [SelectButton, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecommendationTypeComponent {
-  public options = [
+  public options: { label: string; value: RecommendationType }[] = [
     {
       label: 'Music',
-      value: 'music',
+      value: 'song',
     },
     {
       label: 'Album',
@@ -32,5 +36,15 @@ export class RecommendationTypeComponent {
     },
   ];
 
-  public selected = this.options[1].value;
+  public selected: Signal<RecommendationType>;
+
+  constructor(private readonly _recommendations: Recommendations) {
+    this.selected = toSignal(this._recommendations.type$, {
+      initialValue: 'album',
+    });
+  }
+
+  public onTypeChange(event: SelectButtonChangeEvent): void {
+    this._recommendations.type(event.value);
+  }
 }
