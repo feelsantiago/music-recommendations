@@ -24,7 +24,7 @@ export class SpotifySearchRequest {
     const artist =
       this._type !== 'track' ? `artist:${this._recommendation.artist}` : '';
     return new URLSearchParams({
-      q: `${this._type}:${this._recommendation.name}${artist}`,
+      q: `${this._type}:${this._recommendation.name} ${artist}`.trim(),
       type: this._type,
       limit: '1',
     });

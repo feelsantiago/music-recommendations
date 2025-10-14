@@ -30,7 +30,7 @@ export class Spotify implements RecommendationsMetadata {
   ): ResultAsync<Recommendation[], RecommendationError> {
     const result = await safeTryBind(this, async function* ({ $async }) {
       const token = yield* $async(this.token());
-      const search = await this._api.search(recommendations, token);
+      const search = await this._api.search(recommendations, type, token);
       return search.map((response) => response.map((r) => r.recommendation()));
     });
 
