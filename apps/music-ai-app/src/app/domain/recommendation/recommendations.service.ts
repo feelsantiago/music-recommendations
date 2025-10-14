@@ -1,6 +1,10 @@
 import { Injectable, Injector } from '@angular/core';
 import { Option } from '@music-ai/common';
-import { Recommendation, RecommendationTag } from '@music-ai/recommendations';
+import {
+  Recommendation,
+  RecommendationTag,
+  RecommendationType,
+} from '@music-ai/recommendations';
 import { rxState } from '@rx-angular/state';
 import {
   catchError,
@@ -24,12 +28,13 @@ import { RecommendationsApi } from './recommendations.api';
 interface RecommendationState {
   recommendations: Recommendation[];
   current: number;
+  type: RecommendationType;
 }
 
 @Injectable({ providedIn: 'root' })
 export class Recommendations {
   private _state = rxState<RecommendationState>(({ set }) =>
-    set({ recommendations: [], current: 0 }),
+    set({ recommendations: [], current: 0, type: 'album' }),
   );
   private readonly _controller$ = new Subject<'next' | 'prev'>();
 

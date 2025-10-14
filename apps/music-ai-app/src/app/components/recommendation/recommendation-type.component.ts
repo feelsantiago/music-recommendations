@@ -8,9 +8,9 @@ import { SelectButton } from 'primeng/selectbutton';
     <p-selectbutton
       [options]="options"
       [(ngModel)]="selected"
+      [unselectable]="true"
       optionLabel="label"
       optionValue="value"
-      optionDisabled="disabled"
     ></p-selectbutton>
   </div>`,
   imports: [SelectButton, FormsModule],
@@ -21,17 +21,14 @@ export class RecommendationTypeComponent {
     {
       label: 'Music',
       value: 'music',
-      disabled: true,
     },
     {
       label: 'Album',
       value: 'album',
-      disabled: false,
     },
     {
       label: 'Artist',
       value: 'artist',
-      disabled: true,
     },
   ];
 
