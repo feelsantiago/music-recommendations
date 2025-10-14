@@ -30,6 +30,7 @@ export class RecommendationResultInterceptor implements NestInterceptor {
           .inspect((data) => this._limits.used(data))
           .inspect((data) => {
             session.history = data.metadata.history;
+            session.tags = data.metadata.tags;
           })
           .map((response) => response.recommendations),
       ),

@@ -25,6 +25,7 @@ export interface RecommendationResponse {
   metadata: {
     tokens: number;
     history: RecommendationHistory[];
+    tags: string[];
   };
 }
 
