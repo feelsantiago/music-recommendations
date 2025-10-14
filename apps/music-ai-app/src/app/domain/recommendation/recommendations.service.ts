@@ -16,9 +16,11 @@ import {
   Observable,
   of,
   scan,
-  startWith,
+  shareReplay,
   Subject,
   switchMap,
+  tap,
+  withLatestFrom,
 } from 'rxjs';
 import { notifyError } from '../../helpers/http-error';
 import { Settings } from '../settings/settings.service';
@@ -39,6 +41,7 @@ export class Recommendations {
   private readonly _controller$ = new Subject<'next' | 'prev'>();
 
   public recommendations$ = this._state.select('recommendations');
+  public type = this._state.select('type');
   public current$ = this._state.select(
     ['recommendations', 'current'],
     ({ recommendations, current }) => Option.from(recommendations[current]),
@@ -55,21 +58,23 @@ export class Recommendations {
     private readonly _settings: Settings,
     private readonly _injector: Injector,
   ) {
-    const tags$ = this._tags.selected$.pipe(
+    const recommendations$ = this._tags.selected$.pipe(
+      tap(() => this.current(0)),
       map((tags) => tags.map((tag) => tag.name)),
       switchMap((tags) => merge(of([]), this.fetch(tags))),
+      shareReplay(1),
     );
 
     const next$ = combineLatest({
       autoFetch: this._settings.autoFetch$,
-      tags: this._tags.selected$,
       index: this.index$,
       length: this.length$,
     }).pipe(
       filter(({ autoFetch }) => autoFetch),
       filter(({ length }) => length > 0),
       filter(({ index, length }) => index === length),
-      map(({ tags }) => tags.map((tag) => tag.name)),
+      withLatestFrom(this._tags.selected$),
+      map(([_, tags]) => tags.map((tag) => tag.name)),
       switchMap((tags) =>
         this._api.fetch({ tags }).pipe(
           notifyError(this._injector),
@@ -80,14 +85,11 @@ export class Recommendations {
         (recommendations, next) => [...recommendations, ...next],
         <Recommendation[]>[],
       ),
+      withLatestFrom(recommendations$),
+      map(([next, tags]) => [...tags, ...next]),
     );
 
-    const recommendations$ = combineLatest([
-      tags$,
-      next$.pipe(startWith([])),
-    ]).pipe(map(([tags, next]) => [...tags, ...next]));
-
-    this._state.connect('recommendations', recommendations$);
+    this._state.connect('recommendations', merge(recommendations$, next$));
   }
 
   public readonly controller$ = this._controller$.asObservable();

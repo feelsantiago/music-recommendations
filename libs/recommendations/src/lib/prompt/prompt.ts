@@ -30,7 +30,7 @@ export class Prompt {
   }
 
   public extend(): string {
-    return `Recommend for me ${this.length} more music ${this.type}`;
+    return `Recommend for me ${this.length} more music ${this.type} of the same type.`;
   }
 
   public _tags(tags: NotEmptyList<RecommendationTag>): string {
