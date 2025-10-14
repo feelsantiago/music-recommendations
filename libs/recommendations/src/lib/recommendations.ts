@@ -22,5 +22,6 @@ export abstract class Recommendations {
 export abstract class RecommendationsMetadata {
   public abstract fetch(
     recommendations: Recommendation[],
+    type: RecommendationType,
   ): ResultAsync<Recommendation[], RecommendationError>;
 }

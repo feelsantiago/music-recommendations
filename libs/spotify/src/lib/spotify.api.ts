@@ -1,5 +1,5 @@
 import { err, ok, Result, ResultAsync } from '@music-ai/common';
-import { Recommendation } from '@music-ai/recommendations';
+import { Recommendation, RecommendationType } from '@music-ai/recommendations';
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
 import {
@@ -12,6 +12,7 @@ import {
   retry,
   toArray,
 } from 'rxjs';
+import { SpotifySearchRequest } from './spotify-search-request';
 import {
   SpotifySearchResponse,
   SpotifySearchResponsePayload,
@@ -53,20 +54,15 @@ export class SpotifyApi {
 
   public async search(
     recommendations: Recommendation[],
+    type: RecommendationType,
     token: SpotifyToken,
   ): ResultAsync<SpotifySearchResponse[], SpotifyError> {
     const request = from(recommendations).pipe(
       mergeMap((recommendation) => {
-        // TODO: make payload for each type track, album, artist
-        const params = new URLSearchParams({
-          q: `album:${recommendation.name} artist:${recommendation.artist}`,
-          type: 'album',
-          limit: '1',
-        });
-
+        const payload = SpotifySearchRequest.create(type, recommendation);
         return this._http
           .get<SpotifySearchResponsePayload>(
-            `${this._spotify}/search?${params.toString()}`,
+            `${this._spotify}/search?${payload.params().toString()}`,
             {
               headers: {
                 Authorization: token.authorization(),
@@ -74,7 +70,6 @@ export class SpotifyApi {
             },
           )
           .pipe(
-            // TODO: Retry When?
             retry(3),
             map((response) =>
               SpotifySearchResponse.create(recommendation, response.data),

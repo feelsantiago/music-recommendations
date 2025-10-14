@@ -47,7 +47,7 @@ export class RecommendationController {
         this._recommendations.generate(type, tags, history),
       );
 
-      const metadata = await this._metadata.fetch(data.recommendations);
+      const metadata = await this._metadata.fetch(data.recommendations, type);
       return metadata.map((recommendations) => ({ ...data, recommendations }));
     });
   }

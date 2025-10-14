@@ -10,6 +10,7 @@ import {
   Recommendation,
   RecommendationError,
   RecommendationsMetadata,
+  RecommendationType,
 } from '@music-ai/recommendations';
 import { Injectable } from '@nestjs/common';
 import { match, P } from 'ts-pattern';
@@ -25,6 +26,7 @@ export class Spotify implements RecommendationsMetadata {
 
   public async fetch(
     recommendations: Recommendation[],
+    type: RecommendationType,
   ): ResultAsync<Recommendation[], RecommendationError> {
     const result = await safeTryBind(this, async function* ({ $async }) {
       const token = yield* $async(this.token());
