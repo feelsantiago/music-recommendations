@@ -64,6 +64,11 @@ export class Recommendations {
       shareReplay(1),
     );
 
+    const selection$ = combineLatest({
+      tags: this._tags.selected$,
+      type: this.type$,
+    });
+
     const next$ = combineLatest({
       autoFetch: this._settings.autoFetch$,
       index: this.index$,
@@ -72,10 +77,10 @@ export class Recommendations {
       filter(({ autoFetch }) => autoFetch),
       filter(({ length }) => length > 0),
       filter(({ index, length }) => index === length),
-      withLatestFrom(this._tags.selected$),
-      switchMap(([_, tags]) => {
+      withLatestFrom(selection$),
+      switchMap(([_, { tags, type }]) => {
         const names = tags.map((tag) => tag.name);
-        return this._api.fetch({ tags: names }, 'album').pipe(
+        return this._api.fetch({ tags: names }, type).pipe(
           notifyError(this._injector),
           catchError(() => of([])),
         );
@@ -88,7 +93,10 @@ export class Recommendations {
       map(([next, tags]) => [...tags, ...next]),
     );
 
-    this._state.connect('recommendations', merge(recommendations$, next$));
+    this._state.connect(
+      'recommendations',
+      merge(recommendations$, this.type$.pipe(switchMap(() => next$))),
+    );
   }
 
   public readonly controller$ = this._controller$.asObservable();
