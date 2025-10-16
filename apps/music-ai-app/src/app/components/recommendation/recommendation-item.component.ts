@@ -45,7 +45,7 @@ export class RecommendationItemComponent {
       const item = this.item();
       const metadata = Option.from(item.metadata[0]);
       const images = metadata.map((m) => m.images).unwrapOr([]);
-      return images.filter((img) => img.height === 300);
+      return images.filter((img) => img.height >= 250 && img.height <= 350);
     });
   }
 }

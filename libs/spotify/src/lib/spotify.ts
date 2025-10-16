@@ -14,9 +14,10 @@ import {
 } from '@music-ai/recommendations';
 import { Injectable } from '@nestjs/common';
 import { match, P } from 'ts-pattern';
-import { SpotifyToken } from './spotify-token';
-import { SpotifyApi } from './spotify.api';
+import { SpotifyToken } from './api/spotify-token';
+import { SpotifyApi } from './api/spotify.api';
 import { SpotifyError } from './spotify.errors';
+import { SpotifySearchType } from './spotify.types';
 
 @Injectable()
 export class Spotify implements RecommendationsMetadata {
@@ -28,9 +29,15 @@ export class Spotify implements RecommendationsMetadata {
     recommendations: Recommendation[],
     type: RecommendationType,
   ): ResultAsync<Recommendation[], RecommendationError> {
+    const _type = match<RecommendationType, SpotifySearchType>(type)
+      .with('song', () => 'track')
+      .with('album', () => 'album')
+      .with('artist', () => 'artist')
+      .exhaustive();
+
     const result = await safeTryBind(this, async function* ({ $async }) {
       const token = yield* $async(this.token());
-      const search = await this._api.search(recommendations, type, token);
+      const search = await this._api.search(recommendations, _type, token);
       return search.map((response) => response.map((r) => r.recommendation()));
     });
 

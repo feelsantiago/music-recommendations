@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { SpotifyApi } from './api/spotify.api';
 import { Spotify } from './spotify';
-import { SpotifyApi } from './spotify.api';
 import { ConfigurableModuleClass } from './spotify.module-definitions';
 
 @Module({

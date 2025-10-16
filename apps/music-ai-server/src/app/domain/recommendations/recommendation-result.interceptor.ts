@@ -31,6 +31,7 @@ export class RecommendationResultInterceptor implements NestInterceptor {
           .inspect((data) => {
             session.history = data.metadata.history;
             session.tags = data.metadata.tags;
+            session.type = data.metadata.type;
           })
           .map((response) => response.recommendations),
       ),

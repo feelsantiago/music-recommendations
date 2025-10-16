@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import {
   Recommendation,
   RecommendationPayload,
+  RecommendationType,
 } from '@music-ai/recommendations';
 import { Observable } from 'rxjs';
 import { APP_CONFIG, Env } from '../../../environments/env';
@@ -19,9 +20,12 @@ export class RecommendationsApi {
     private readonly _http: HttpClient,
   ) {}
 
-  public fetch(tags: RecommendationPayload): Observable<Recommendation[]> {
+  public fetch(
+    tags: RecommendationPayload,
+    type: RecommendationType,
+  ): Observable<Recommendation[]> {
     return this._http
-      .post<Recommendation[]>(`${this.url}?type=album`, tags)
+      .post<Recommendation[]>(`${this.url}?type=${type}`, tags)
       .pipe(toAppError());
   }
 }

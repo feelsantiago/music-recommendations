@@ -34,6 +34,7 @@ export class Gemini implements Recommendations {
           tokens: response.tokens.total,
           history: response.history,
           tags,
+          type,
         },
       }));
     });

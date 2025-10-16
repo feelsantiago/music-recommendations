@@ -1,6 +1,6 @@
 import { Duration, Result } from '@music-ai/common';
 import * as z from 'zod';
-import { SpotifyError } from './spotify.errors';
+import { SpotifyError } from '../spotify.errors';
 
 export type SpotifyTokenPayload = z.infer<typeof SpotifyToken.schema$>;
 

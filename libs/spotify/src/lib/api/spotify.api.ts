@@ -1,5 +1,5 @@
-import { err, ok, Result, ResultAsync } from '@music-ai/common';
-import { Recommendation, RecommendationType } from '@music-ai/recommendations';
+import { err, Result, ResultAsync } from '@music-ai/common';
+import { Recommendation } from '@music-ai/recommendations';
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
 import {
@@ -12,17 +12,18 @@ import {
   retry,
   toArray,
 } from 'rxjs';
-import { SpotifySearchRequest } from './spotify-search-request';
-import {
-  SpotifySearchResponse,
-  SpotifySearchResponsePayload,
-} from './spotify-search-response';
-import { SpotifyToken, SpotifyTokenPayload } from './spotify-token';
-import { SpotifyError } from './spotify.errors';
+import { SpotifyError } from '../spotify.errors';
 import {
   MODULE_OPTIONS_TOKEN,
   SpotifyModuleOptions,
-} from './spotify.module-definitions';
+} from '../spotify.module-definitions';
+import { SpotifySearchType } from '../spotify.types';
+import { SpotifySearchRequest } from './payload/spotify-search-request';
+import {
+  SpotifySearchResponse,
+  SpotifySearchTypeResponse,
+} from './payload/spotify-search-response';
+import { SpotifyToken, SpotifyTokenPayload } from './spotify-token';
 
 @Injectable()
 export class SpotifyApi {
@@ -54,33 +55,31 @@ export class SpotifyApi {
 
   public async search(
     recommendations: Recommendation[],
-    type: RecommendationType,
+    type: SpotifySearchType,
     token: SpotifyToken,
-  ): ResultAsync<SpotifySearchResponse[], SpotifyError> {
+  ): ResultAsync<SpotifySearchTypeResponse[], SpotifyError> {
     const request = from(recommendations).pipe(
       mergeMap((recommendation) => {
-        const payload = SpotifySearchRequest.create(type, recommendation);
+        const payload = new SpotifySearchRequest(type, recommendation);
         return this._http
-          .get<SpotifySearchResponsePayload>(
-            `${this._spotify}/search?${payload.params().toString()}`,
-            {
-              headers: {
-                Authorization: token.authorization(),
-              },
+          .get(`${this._spotify}/search?${payload.params().toString()}`, {
+            headers: {
+              Authorization: token.authorization(),
             },
-          )
+          })
           .pipe(
             retry(3),
             map((response) =>
-              SpotifySearchResponse.create(recommendation, response.data),
+              SpotifySearchResponse.createOrEmpty(
+                type,
+                recommendation,
+                response.data,
+              ),
             ),
-            catchError(() =>
-              of(ok(SpotifySearchResponse.empty(recommendation))),
-            ),
+            catchError(() => of(SpotifySearchResponse.empty(recommendation))),
           );
       }),
       toArray(),
-      map((response) => response.map((search) => search.unwrap())),
     );
 
     return Result.fromAsync(() => lastValueFrom(request));

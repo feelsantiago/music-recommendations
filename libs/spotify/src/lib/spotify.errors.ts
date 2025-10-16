@@ -1,4 +1,5 @@
 import { AppError, AppErrorOptions } from '@music-ai/common';
+import { SpotifySearchType } from './spotify.types';
 
 export type SpotifyErrorName =
   | 'fetch_token_error'
@@ -43,12 +44,17 @@ export class SpotifyError extends AppError {
   }
 
   public static search(
+    type: SpotifySearchType,
     source: Error,
     options: Omit<AppErrorOptions, 'name'> = {},
   ): SpotifyError {
-    return new SpotifyError('search_error', '[Spotify] - Unable to search', {
-      ...options,
-      source,
-    });
+    return new SpotifyError(
+      'search_error',
+      `[Spotify] - Unable to search metadata for ${type}`,
+      {
+        ...options,
+        source,
+      },
+    );
   }
 }

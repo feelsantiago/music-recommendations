@@ -1,10 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { Option } from '@music-ai/common';
-import {
-  Recommendation,
-  RecommendationTag,
-  RecommendationType,
-} from '@music-ai/recommendations';
+import { Recommendation, RecommendationType } from '@music-ai/recommendations';
 import { rxState } from '@rx-angular/state';
 import {
   catchError,
@@ -25,6 +21,7 @@ import {
 import { notifyError } from '../../helpers/http-error';
 import { Settings } from '../settings/settings.service';
 import { Tags } from '../tags/tags.service';
+import { TagSelected } from '../tags/tags.types';
 import { RecommendationsApi } from './recommendations.api';
 
 interface RecommendationState {
@@ -58,10 +55,12 @@ export class Recommendations {
     private readonly _settings: Settings,
     private readonly _injector: Injector,
   ) {
-    const recommendations$ = this._tags.selected$.pipe(
+    const recommendations$ = combineLatest([
+      this._tags.selected$,
+      this.type$,
+    ]).pipe(
       tap(() => this.current(0)),
-      map((tags) => tags.map((tag) => tag.name)),
-      switchMap((tags) => merge(of([]), this.fetch(tags))),
+      switchMap(([tags, type]) => merge(of([]), this.fetch(tags, type))),
       shareReplay(1),
     );
 
@@ -74,13 +73,13 @@ export class Recommendations {
       filter(({ length }) => length > 0),
       filter(({ index, length }) => index === length),
       withLatestFrom(this._tags.selected$),
-      map(([_, tags]) => tags.map((tag) => tag.name)),
-      switchMap((tags) =>
-        this._api.fetch({ tags }).pipe(
+      switchMap(([_, tags]) => {
+        const names = tags.map((tag) => tag.name);
+        return this._api.fetch({ tags: names }, 'album').pipe(
           notifyError(this._injector),
           catchError(() => of([])),
-        ),
-      ),
+        );
+      }),
       scan(
         (recommendations, next) => [...recommendations, ...next],
         <Recommendation[]>[],
@@ -116,8 +115,12 @@ export class Recommendations {
     this._state.set('type', () => type);
   }
 
-  public fetch(tags: RecommendationTag[]): Observable<Recommendation[]> {
-    const fetch$ = this._api.fetch({ tags }).pipe(
+  public fetch(
+    tags: TagSelected[],
+    type: RecommendationType,
+  ): Observable<Recommendation[]> {
+    const names = tags.map((tag) => tag.name);
+    const fetch$ = this._api.fetch({ tags: names }, type).pipe(
       notifyError(this._injector),
       catchError(() => of([])),
     );
