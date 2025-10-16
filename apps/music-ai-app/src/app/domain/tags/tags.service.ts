@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { rxState } from '@rx-angular/state';
-import { combineLatest, map, Observable } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Observable } from 'rxjs';
 import { CustomTags } from '../custom/custom-tags.service';
 import { TagsApi } from './tags.api';
 import { TagGroupedColorful, TagSelected } from './tags.types';
@@ -19,7 +19,11 @@ export class Tags {
   );
 
   public tags$ = this._state.select('tags');
-  public selected$ = this._state.select('selected');
+  public selected$ = this._state
+    .select('selected')
+    .pipe(
+      distinctUntilChanged((prev, cur) => prev.some((p) => cur.includes(p))),
+    );
 
   constructor(
     private readonly _api: TagsApi,
