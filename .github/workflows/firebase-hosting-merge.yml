@@ -16,7 +16,7 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci --legacy-peer-deps
-      - run: nx build music-ai-app --configuration=production
+      - run: npx nx build music-ai-app --configuration=production
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
