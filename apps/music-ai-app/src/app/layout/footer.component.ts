@@ -29,6 +29,15 @@ interface FooterLink {
       <img [ngSrc]="data.icon" width="24" height="24" alt="data.alt" />
     </a>
   `,
+  styles: [
+    `
+      :host ::ng-deep .p-card {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+    `,
+  ],
   imports: [Tooltip, ButtonModule, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

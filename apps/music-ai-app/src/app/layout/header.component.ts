@@ -34,6 +34,15 @@ import { Toolbar } from 'primeng/toolbar';
       </p-toolbar>
     </p-card>
   `,
+  styles: [
+    `
+      :host ::ng-deep .p-card {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+    `,
+  ],
   imports: [CommonModule, Toolbar, ButtonModule, CardModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -7,4 +7,10 @@
 html,
 body {
   font-family: 'Helvetica Neue', sans-serif;
+  background-image: linear-gradient(
+    rgb(47, 53, 61) 0%,
+    rgb(53, 60, 67) 20%,
+    rgba(0, 0, 0, 0)
+  );
+  background-attachment: fixed;
 }
