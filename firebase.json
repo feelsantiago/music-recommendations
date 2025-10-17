@@ -6,13 +6,6 @@
       {
         "source": "**",
         "destination": "/index.html"
-      },
-      {
-        "source": "api/**",
-        "run": {
-          "serviceId": "music-ai-server",
-          "region": "southamerica-east1 "
-        }
       }
     ]
   }
