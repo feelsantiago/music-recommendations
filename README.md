@@ -1,6 +1,6 @@
 # Music AI Recommendations
 
-This project is a simple recommendation system for music albums, artist and songs. The system is built using [Nx](https://nx.dev/) and powered by [Google Gemini](https://gemini.google.com/?hl=pt-BR) and [Spotify Api](https://developer.spotify.com/documentation/web-api).
+This project is a simple recommendation system for music albums, artists, and songs. The system is built using [Nx](https://nx.dev/) and powered by [Google Gemini](https://gemini.google.com/?hl=pt-BR) and [Spotify Api](https://developer.spotify.com/documentation/web-api).
 
 
 https://github.com/user-attachments/assets/3dcd28d0-1087-443c-badc-d948365054e5
@@ -10,18 +10,18 @@ https://github.com/user-attachments/assets/3dcd28d0-1087-443c-badc-d948365054e5
 
 ---
 
-The system will create a session for each user and store their history of interactions for 15 minutes. During this time we can interact with the platform to get recommendations. Every time you change the type of the recommendations (artist, music, album or tags) the history is reset.
+The system will create a session for each user and store their interaction history for 15 minutes. During this time, we can interact with the platform to get recommendations. Every time you change the type of recommendations (artist, music, album, or tags), the history is reset.
 
-The system also counts for usage of LLM tokens, and will throw an error if the token limit is exceeded.
+The system also tracks usage of LLM tokens and will throw an error if the token limit is exceeded.
 
 ### Setup
 
 ---
 
-Before running the project you need to setup a few things:
+Before running the project, you need to setup a few things:
 
 - Make sure to have a [Redis](https://redis.io/) instance running.
-- Setup a `.env` file in the directory `apps/music-ai-app` with the following variables:
+- Setup a `.env` file in the directory `apps/music-ai-server` with the following variables:
 
 ```bash
 NODE_ENV=development
