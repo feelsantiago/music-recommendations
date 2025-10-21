@@ -11,7 +11,7 @@ export class NotEmptyList<T> {
       );
     }
 
-    return ok(new NotEmptyList(values));
+    return ok(new NotEmptyList([...values]));
   }
 
   public values(): T[] {
