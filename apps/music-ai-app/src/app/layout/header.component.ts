@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -10,12 +10,8 @@ import { Toolbar } from 'primeng/toolbar';
     <p-card>
       <p-toolbar>
         <ng-template #start>
-          <p-button
-            icon="pi pi-headphones"
-            text
-            severity="secondary"
-          ></p-button>
-          <h1>Music AI</h1>
+          <img ngSrc="logo.png" width="50" height="50" alt="music ai logo" />
+          <h1>Recommendations</h1>
         </ng-template>
         <ng-template #end>
           @for (link of links; track link.url) {
@@ -43,7 +39,7 @@ import { Toolbar } from 'primeng/toolbar';
       }
     `,
   ],
-  imports: [CommonModule, Toolbar, ButtonModule, CardModule],
+  imports: [CommonModule, Toolbar, ButtonModule, CardModule, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
