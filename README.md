@@ -2,7 +2,9 @@
 
 This project is a simple recommendation system for music albums, artist and songs. The system is built using [Nx](https://nx.dev/) and powered by [Google Gemini](https://gemini.google.com/?hl=pt-BR) and [Spotify Api](https://developer.spotify.com/documentation/web-api).
 
-![](resources/rand-music.mov)
+
+https://github.com/user-attachments/assets/3dcd28d0-1087-443c-badc-d948365054e5
+
 
 ### How it works
 
