@@ -1,82 +1,47 @@
-# MusicAi
+# Music AI Recommendations
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+This project is a simple recommendation system for music albums, artist and songs. The system is built using [Nx](https://nx.dev/) and powered by [Google Gemini](https://gemini.google.com/?hl=pt-BR) and [Spotify Api](https://developer.spotify.com/documentation/web-api).
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+![](resources/rand-music.mov)
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+### How it works
 
-## Finish your CI setup
+---
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/aOVwO36t6j)
+The system will create a session for each user and store their history of interactions for 15 minutes. During this time we can interact with the platform to get recommendations. Every time you change the type of the recommendations (artist, music, album or tags) the history is reset.
 
+The system also counts for usage of LLM tokens, and will throw an error if the token limit is exceeded.
 
-## Run tasks
+### Setup
 
-To run the dev server for your app, use:
+---
 
-```sh
-npx nx serve music-ai-app
+Before running the project you need to setup a few things:
+
+- Make sure to have a [Redis](https://redis.io/) instance running.
+- Setup a `.env` file in the directory `apps/music-ai-app` with the following variables:
+
+```bash
+NODE_ENV=development
+PORT=3000
+SESSION_SECRET=MY_SESSION_SECRET
+SESSION_STORE_PREFIX=musicai:
+CSRF_SECRET=MY_CSRF_SECRET
+CSRF_COOKIE_NAME=CSRF_TOKEN
+MUSIC_UI_APP_URL=http://localhost:4200
+REDIS_URL=redis://localhost:6379
+AI_KEY=GEMINI_API_KEY
+RECOMMENDATION_LENGTH=3
+CONTEXT_CACHE=true
+MODEL=gemini-2.5-flash
+SPOTIFY_CLIENT_ID=SPOTIFY_CLIENT_ID
+SPOTIFY_CLIENT_SECRET=SPOTIFY_CLIENT_SECRET
 ```
 
-To create a production bundle:
+### Running the project
 
-```sh
-npx nx build music-ai-app
+Use Nx to run the project:
+
+```bash
+$ npx nx run-many --target=serve --all
 ```
-
-To see all available targets to run for a project, run:
-
-```sh
-npx nx show project music-ai-app
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
-```
-
-To generate a new library, use:
-
-```sh
-npx nx g @nx/angular:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
