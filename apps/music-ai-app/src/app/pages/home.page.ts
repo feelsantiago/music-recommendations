@@ -31,7 +31,7 @@ import { Tutorial, TutorialImage } from '../domain/tutorial/tutorial.service';
         <msc-recommendation-settings />
       </div>
     </div>
-    @if (visible$ | push; as visible) {
+    @if (tutorial$ | push; as visible) {
       <p-galleria
         [value]="images$ | push"
         [visible]="visible"
@@ -79,7 +79,7 @@ import { Tutorial, TutorialImage } from '../domain/tutorial/tutorial.service';
 export class HomePage {
   public drawer = signal(false);
   public images$: Observable<TutorialImage[]>;
-  public visible$: Observable<boolean>;
+  public tutorial$: Observable<boolean>;
   public index = signal(0);
 
   public responsiveOptions = [
@@ -103,7 +103,7 @@ export class HomePage {
 
   constructor(private readonly _tutorial: Tutorial) {
     this.images$ = this._tutorial.images;
-    this.visible$ = this._tutorial.enabled;
+    this.tutorial$ = this._tutorial.enabled;
   }
 
   public onOpenDrawer(): void {
