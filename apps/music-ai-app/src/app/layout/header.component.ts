@@ -74,6 +74,6 @@ export class HeaderComponent {
   constructor(private readonly _tutorial: Tutorial) {}
 
   public onTutorial(): void {
-    this._tutorial.update(true);
+    this._tutorial.show();
   }
 }

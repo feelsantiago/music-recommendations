@@ -59,4 +59,8 @@ export class Tutorial {
   public update(status: boolean): void {
     this._state.set('enabled', () => status);
   }
+
+  public show(): void {
+    this._state.set('enabled', () => true);
+  }
 }
