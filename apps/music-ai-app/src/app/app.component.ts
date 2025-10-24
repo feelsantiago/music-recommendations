@@ -15,7 +15,7 @@ import { HeaderComponent } from './layout/header.component';
       <div class="flex flex-col min-h-screen justify-between">
         <div>
           <msc-header />
-          <div class="p-8">
+          <div class="p-5">
             <router-outlet />
           </div>
         </div>

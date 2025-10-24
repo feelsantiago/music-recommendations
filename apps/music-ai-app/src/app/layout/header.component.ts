@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { Toolbar } from 'primeng/toolbar';
+import { Tutorial } from '../domain/tutorial/tutorial.service';
 
 @Component({
   selector: 'msc-header',
@@ -10,10 +11,22 @@ import { Toolbar } from 'primeng/toolbar';
     <p-card>
       <p-toolbar>
         <ng-template #start>
-          <img ngSrc="logo.png" width="50" height="50" alt="music ai logo" />
-          <h1>Recommendations</h1>
+          <img
+            ngSrc="logo.png"
+            width="50"
+            height="50"
+            alt="music ai logo"
+            priority
+          />
         </ng-template>
         <ng-template #end>
+          <p-button
+            [style]="{ width: '42px', height: '34px' }"
+            icon="pi pi-question-circle"
+            severity="secondary"
+            class="mr-2"
+            (onClick)="onTutorial()"
+          />
           @for (link of links; track link.url) {
             <a
               class="mr-2"
@@ -57,4 +70,10 @@ export class HeaderComponent {
       icon: 'pi pi-github',
     },
   ];
+
+  constructor(private readonly _tutorial: Tutorial) {}
+
+  public onTutorial(): void {
+    this._tutorial.update(true);
+  }
 }
